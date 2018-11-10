@@ -1,0 +1,25 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import Hello from '@/components/hello'
+import Register from '@/components/register'
+import Manor from '@/components/manor'
+
+Vue.use(Router)
+
+export default new Router({
+  routes: [
+    {
+      path: '/',
+      name: 'Hello',
+      component: Hello
+    }, {
+      path: '/manor',
+      name: 'Manor',
+      component: Manor
+    }, {
+      path: '/register',
+      name: 'Register',
+      component: Register
+    },
+  ]
+})

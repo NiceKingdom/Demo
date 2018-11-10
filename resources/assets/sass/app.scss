@@ -1,0 +1,144 @@
+@charset "utf-8";
+// Fonts
+@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+// Variables
+@import "variables";
+
+$header-line-height: 60px;
+
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $font-family-sans-serif;
+  font-size: $font-size-base;
+}
+
+a:link {
+  color: $main-font;
+  text-decoration:none;
+}
+a:visited {
+  color: $main-font;
+  text-decoration:none;
+}
+a:hover {
+  color: $main-font;
+  text-decoration:none;
+}
+a:active {
+  color: $main-font;
+  text-decoration:none;
+}
+
+/* --- Section --- */
+.container {
+  margin:0 auto;
+  width: 1250px;
+}
+
+.main {
+  margin: 20px auto auto auto;
+}
+
+.button-blue {
+  background-color: #67a7ff;
+  color: #f5f5f5;
+  padding: 5px 10px;
+  margin: 4px 6px;
+  border: none;
+  border-radius: 3px;
+  display: inline-block;
+  font-size: 1rem;
+}
+
+.button-red {
+  background-color: #ff604c;
+  color: #f5f5f5;
+  padding: 5px 10px;
+  margin: 4px 6px;
+  border: none;
+  border-radius: 3px;
+  display: inline-block;
+  font-size: 1rem;
+}
+
+.button-small {
+  padding: 3px 6px;
+  margin: 2px 3px;
+  font-size: 0.86rem;
+}
+
+/* --- Class --- */
+.el-header {
+  //margin-bottom: 12px;
+  //background-color: $main-bg;
+  //color: #858585;
+  text-align: center;
+  //line-height: $header-line-height;
+  //box-shadow:0 -2px 8px #b2b2b2 inset;
+}
+
+.el-footer {
+  font-size: 0.75rem;
+  background-color: $footer-bg;
+  color: #858585;
+  text-align: center;
+  line-height: 30px;
+}
+
+.none-list {
+  list-style-type: none;
+}
+
+.resource-bar {
+  margin: 20px auto auto auto;
+  width: 88*4px;
+}
+
+/* Color */
+.color-blue {
+  color: #425aff;
+}
+.color-blue-sub {
+  color: #71d1ff;
+}
+
+.color-red {
+  color: #ff5c50;
+}
+.color-red-sub {
+  color: #ffaba1;
+}
+
+.color-green {
+  color: #00ba25;
+}
+.color-green-sub {
+  color: #20ff48;
+}
+
+.color-brown {
+  color: #ba7448;
+}
+.color-brown-sub {
+  color: #ffb75a;
+}
+
+.color-gray {
+  color: #414143;
+}
+.color-gray-sub {
+  color: #999996;
+}
+
+.color-gold {
+  color: #e6cd00;
+}
+.color-gold-sub {
+  color: #d4d700;
+}
