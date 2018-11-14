@@ -169,12 +169,12 @@ class BuildingService
     /**
      * 建筑建成，增加建筑数量、生产资源量
      *
-     * @param int $key 施工队的键
+     * @param int $scheduleKey 施工队的键
      * @return array|\Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
-    public function build(int $key)
+    public function build(int $scheduleKey)
     {
-        $schedule = $this->schedules[$key];
+        $schedule = $this->schedules[$scheduleKey];
         $type = $schedule->type;
         $level = $schedule->level;
         $number = $schedule->number;
@@ -277,12 +277,12 @@ class BuildingService
     /**
      * 取消建造，返还部分资源，解除占用
      *
-     * @param int $key 施工队的键
+     * @param int $scheduleKey 施工队的键
      * @return array|\Illuminate\Contracts\Routing\ResponseFactory|string|\Symfony\Component\HttpFoundation\Response
      */
-    public function buildRecall(int $key)
+    public function buildRecall(int $scheduleKey)
     {
-        $schedule = $this->schedules[$key];
+        $schedule = $this->schedules[$scheduleKey];
 
         $item = $this->getBuildingList();
         $item = $item[$schedule['type']][$schedule['level'] - 1];
@@ -305,7 +305,7 @@ class BuildingService
             }
 
             // 删除建筑进程
-            $this->deleteSchedule($this->schedules[$key]->id);
+            $this->deleteSchedule($this->schedules[$scheduleKey]->id);
             DB::commit();
             return ['succeed', '已取消该施工项目'];
         } catch (\Exception $exception) {

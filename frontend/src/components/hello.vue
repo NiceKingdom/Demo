@@ -42,7 +42,7 @@ export default {
         window.location = '/#/manor'
       }).catch((error) => {
         this.$swal({
-          text: (error.response && error.response.data) ? error.response : '服务器出错',
+          text: (error.response.data) ? error.response.data : '服务器出错',
           type: 'error',
         })
       })

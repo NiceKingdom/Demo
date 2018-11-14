@@ -60,7 +60,7 @@ if (!function_exists('exploreTwo')) {
      */
     function exploreTwo($number)
     {
-        if (!is_numeric($number)) return '参数错误';
+        if (!is_numeric($number)) return null;
 
         $result = explode('.', $number);
         if (count($result) < 2) {

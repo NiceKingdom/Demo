@@ -110,6 +110,7 @@ class BuildingController extends Controller
      */
     public function recall(int $id)
     {
+        $aimKey = false;
         foreach ($this->buildingService->schedules as $key => $schedule) {
             if ($schedule->id === $id) {
                 $aimKey = $key;
@@ -118,7 +119,7 @@ class BuildingController extends Controller
             }
         }
 
-        return $this->buildingService->buildRecall($aimKey);
+        return ($aimKey !== false) ? $this->buildingService->buildRecall($aimKey) : ['failed', '我们没有发现你说的那支建筑队'];
     }
 
     /**

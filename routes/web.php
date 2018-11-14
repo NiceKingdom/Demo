@@ -12,19 +12,8 @@
 */
 
 Route::get('/', function () {
-    if (\Illuminate\Support\Facades\Auth::check()) {
-        return view('kingdom');
-    } else {
-        return view('outside');
-    }
+    return view('outside');
 });
-Route::get('/kingdom', function () {
-    return view('kingdom');
-})->middleware('auth');
-
-Route::get('/building', function () {
-    return view('building');
-})->middleware('auth');
 
 // 通用
 Route::get ('/index', 'Common\UserController@getStatus');

@@ -105,12 +105,9 @@ export default new VueX.Store({
   },
   actions: {
     update (context, interval) {
-      // if (interval > Math.ceil(new Date() / 1000) + 15) {
-      //   context.commit('secUpdate')
-        // context.commit('dayUpdate')
-        // context.commit('monthUpdate')
-        // context.commit('yearUpdate')
-      // }
+      if (interval > Math.ceil(new Date() / 1000) + 15) {
+        context.commit('secUpdate')
+      }
     }
   },
 })
