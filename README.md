@@ -38,8 +38,8 @@ npm run dev
 
 ## 开发
 
-如果您想为本项目提供 PR，请遵循 [开发风格](https://github.com/Sun-FreePort/testR/blob/master/0Doc/work-style.md)。
-（前端使用 ESLint 检查器）
+如果您想为本项目提供 PR，请遵循 [开发风格](0Doc/work-style.md)。
+（前端额外使用 ESLint 检查器）
 
 # 许可（LICENSE）
 
