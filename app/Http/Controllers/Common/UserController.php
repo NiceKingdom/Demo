@@ -64,74 +64,73 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $check = User::where('email', $request['email'])->exists();
-
-        if (!$check) {
-            $userPlant = config('params.userPlant');
-            $lastId = User::select('id')->orderby('id', 'desc')->first() ?? new User();
-            $id = $lastId->id + 1;
-            $capital = ceil($id / sqrt($userPlant)) * 3 - 1 . ',' . ((($id - 1) % sqrt($userPlant) + 1) * 3 - 1);
-
-            DB::beginTransaction();
-            try {
-                $info['user'] = User::create([
-                    'nickname' => $request['nickname'],
-                    'email' => $request['email'],
-                    'kingdom' => $request['kingdom'],
-                    'capital' => $capital,
-                    'password' => Hash::make($request['password']),
-                ]);
-
-                $buildingList = [
-                    'userId' => $info['user']->id,
-                    'startTime' => 0,
-                    'endTime' => 0,
-                    'type' => '',
-                    'level' => 0,
-                    'action' => BuildingList::ACTION_SLEEP,
-                    'number' => 0,
-                ];
-                BuildingList::create($buildingList);
-                BuildingList::create($buildingList);
-                BuildingList::create($buildingList);
-
-                $this->logService::signUpOrIn('注册成功', 101, false);
-
-                $info['user'] = User::find($info['user']->id);
-
-                Building::create([
-                    'userId' => $info['user']->id,
-                ]);
-                Resource::create([
-                    'userId' => $info['user']->id,
-                ]);
-                DB::commit();
-            } catch (\Exception $exception) {
-                DB::rollBack();
-                $logID = 'UriBT' . logService::common('注册失败:' . $exception->getMessage(), 500, 'Common\UserController::register', 'Error');
-                return response('意外情况，编号：' . $logID, 500);
-            }
-
-            if (Auth::check() || Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
-                $info['user'] = User::find(Auth::id());
-
-                if (!$systemInfo = Redis::get('systemInfo')) {
-                    $systemInfo = json_encode(System::orderBy('id', 'desc')->first());
-                    Redis::set('systemInfo', $systemInfo);
-                }
-                $info['system'] = json_decode($systemInfo);
-
-                $info['resource'] = Resource::where('userId', Auth::id())->first();
-                $info['building'] = Building::where('userId', Auth::id())->first();
-
-                $this->userService->checkRedis();
-
-                return $info;
-            }
-
-            return response('服务器出现意外情况，请尝试手动登录', 500);
+        if ($check) {
+            return response('帐号已存在，找回它，或换一个吧', 400);
         }
 
-        return response('帐号已存在，找回它，或换一个吧', 400);
+        $userPlant = config('params.userPlant');
+        $lastId = User::select('id')->orderby('id', 'desc')->first() ?? new User();
+        $id = $lastId->id + 1;
+        $capital = ceil($id / sqrt($userPlant)) * 3 - 1 . ',' . ((($id - 1) % sqrt($userPlant) + 1) * 3 - 1);
+
+        DB::beginTransaction();
+        try {
+            $info['user'] = User::create([
+                'nickname' => $request['nickname'],
+                'email' => $request['email'],
+                'kingdom' => $request['kingdom'],
+                'capital' => $capital,
+                'password' => Hash::make($request['password']),
+            ]);
+
+            $buildingList = [
+                'userId' => $info['user']->id,
+                'startTime' => 0,
+                'endTime' => 0,
+                'type' => '',
+                'level' => 0,
+                'action' => BuildingList::ACTION_SLEEP,
+                'number' => 0,
+            ];
+            BuildingList::create($buildingList);
+            BuildingList::create($buildingList);
+            BuildingList::create($buildingList);
+
+            $this->logService::signUpOrIn('注册成功', 101, false);
+
+            $info['user'] = User::find($info['user']->id);
+
+            Building::create([
+                'userId' => $info['user']->id,
+            ]);
+            Resource::create([
+                'userId' => $info['user']->id,
+            ]);
+            DB::commit();
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            $logID = 'UriBT' . logService::common('注册失败:' . $exception->getMessage(), 500, 'Common\UserController::register', 'Error');
+            return response('意外情况，编号：' . $logID, 500);
+        }
+
+        if (Auth::check() || Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
+            $info['user'] = User::find(Auth::id());
+
+            if (!$systemInfo = Redis::get('systemInfo')) {
+                $systemInfo = json_encode(System::orderBy('id', 'desc')->first());
+                Redis::set('systemInfo', $systemInfo);
+            }
+            $info['system'] = json_decode($systemInfo);
+
+            $info['resource'] = Resource::where('userId', Auth::id())->first();
+            $info['building'] = Building::where('userId', Auth::id())->first();
+
+            $this->userService->checkRedis();
+
+            return $info;
+        }
+
+        return response('服务器出现意外情况，请尝试手动登录', 500);
     }
 
     /**

@@ -76,25 +76,25 @@ class ResourceAuto
 
         // 计算木材产量
         $interim = exploreTwo($time * $resource->woodOutput * $workRate);
-        $resource->wood = $interim[0];
-        $resource->woodChip = $interim[1];
+        $resource->wood += $interim[0];
+        $resource->woodChip += $interim[1];
 
         // 石头
         $interim = exploreTwo($time * $resource->stoneOutput * $workRate);
-        $resource->stone = $interim[0];
-        $resource->stoneChip = $interim[1];
+        $resource->stone += $interim[0];
+        $resource->stoneChip += $interim[1];
 
         // 人头税
         $interim = exploreTwo($time * $resource->people * 0.05);
-        $resource->money = $interim[0];
-        $resource->moneyChip = $interim[1];
+        $resource->money += $interim[0];
+        $resource->moneyChip += $interim[1];
 
         // 人口自增
         if ($workerNeed > $resource->people) {
             $peopleAdd = $time * 0.012;
             $interim = exploreTwo($peopleAdd);
-            $resource->people = $interim[0];
-            $resource->peopleChip = $interim[1];
+            $resource->people += $interim[0];
+            $resource->peopleChip += $interim[1];
         }
 
         $resource->save();
