@@ -1,17 +1,38 @@
 <template>
-    <div>
-        <VResourceBar />
-        <div class="flex">
-            <div class="manor">
-                <h3 class="heading">领地</h3>
-                <div>
-                    <span>王国：{{kingdom}}；</span>
-                    <span>领主：{{nickname}}；</span>
-                    <span>坐标：X{{capitalX}}, Y{{capitalY}}</span>
-                </div>
-            </div>
-        </div>
+    <!--<div>-->
+        <!--<VResourceBar />-->
+        <!--<div class="flex">-->
+            <!--<div class="manor">-->
+                <!--<h3 class="heading">领地</h3>-->
+                <!--<div>-->
+                    <!--<span>王国：{{kingdom}}；</span>-->
+                    <!--<span>领主：{{nickname}}；</span>-->
+                    <!--<span>坐标：X{{capitalX}}, Y{{capitalY}}</span>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+  <div class="manor-wrapper">
+    <div class="manor-header">
+      <div class="logo-wrapper">
+        <img class="logo" src="../assets/logo.png" alt="">
+      </div>
+      <div class="manor-name">{{kingdom}}</div>
     </div>
+    <div class="manor-main-wrapper">
+      <div class="info-wrapper">
+        <div class="row">王国：{{kingdom}}</div>
+        <div class="row">领主：{{nickname}}</div>
+        <div class="row">坐标：({{capitalX}}, {{capitalY}})</div>
+      </div>
+      <div class="links-wrapper">
+        <button class="link" @click="jump('/building')">建筑</button>
+        <button class="link" @click="jump('#')">地图</button>
+        <button class="link" @click="jump('#')">军事</button>
+      </div>
+    </div>
+    <div class="footer-wrapper">footer and content</div>
+  </div>
 </template>
 
 <script>
@@ -169,6 +190,13 @@
         }
         return typeTrans[type]
       },
+      /**
+       * 按钮点击事件（跳转）
+       * author：chen
+       */
+      jump (str) {
+        this.$router.push(str)
+      },
     },
     computed: {
       nickname () {
@@ -321,7 +349,8 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="stylus">
+  /*
     table, th, td {
         border: 1px solid black;
         padding: 2px;
@@ -341,5 +370,68 @@
     .manor {
         background-color: #d0f3d3;
         padding: 17px;
-    }
+    }*/
+  .manor-wrapper
+    width: 100%
+    .manor-header
+      padding: 2rem 3rem
+      text-align: left
+      /*display: flex
+      align-items: center
+      justify-content: space-between*/
+      .logo-wrapper
+        display: inline-block
+        width: 40%
+        height: 60px
+        line-height: 60px
+        text-align: left
+        vertical-align: middle
+        .logo
+          width: 300px
+          height: 60px
+      .manor-name
+        display: inline-block
+        width: 40%
+        height: 60px
+        line-height: 60px
+        font-size: 1.8rem
+        text-align: left
+        vertical-align: middle
+    .manor-main-wrapper
+      width: 100%
+      .info-wrapper
+        margin: 0 auto
+        padding: 2rem
+        width: 440px
+        /*height: 360px*/
+        -webkit-box-shadow:  0 2px 8px #cccccc
+        -moz-box-shadow: 0 2px 8px #cccccc
+        box-shadow: 0 2px 8px #cccccc
+        -webkit-border-radius: 4px
+        -moz-border-radius: 4px
+        border-radius: 4px
+        .row
+          height: 3rem
+          line-height: 3rem
+          text-align: left
+          font-size: 1.2rem
+      .links-wrapper
+        width: 100%
+        text-align: center
+        .link
+          margin: 3rem 2rem
+          width: 4rem
+          height: 2.4rem
+          line-height: 2.4rem
+          text-align: center
+    .footer-wrapper
+      position: absolute
+      left: 0
+      bottom: 0
+      width: 100%
+      min-height: 80px
+      line-height: 80px
+      text-align: center
+      font-size: 2rem
+      background-color: #cccccc
 </style>

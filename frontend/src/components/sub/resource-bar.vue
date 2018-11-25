@@ -22,6 +22,9 @@ export default {
 </script>
 
 <style scoped>
+    .flex-block{
+      width: 100%;
+    }
     .flex-row {
         display: flex;
         justify-content: center;
