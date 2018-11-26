@@ -34,7 +34,7 @@ export default new VueX.Store({
     increment: state => state.count++,
     decrement: state => state.count--,
 
-    // 更新时间，
+    // 分支：resource-updata 领地的资源，会随时间匀速增长（函数未完成）
     secUpdate: (state) => {
       // https://stackoverflow.com/questions/32422867/when-do-i-need-to-use-hasownproperty
       Object.keys(state.resource).forEach(function (key) {
