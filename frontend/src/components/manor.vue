@@ -17,7 +17,7 @@
       <div class="logo-wrapper">
         <img class="logo" src="../assets/logo.png" alt="">
       </div>
-      <div class="manor-name">{{kingdom}}</div>
+      <div class="manor-name" @click="jump('/')">{{kingdom}}</div>
     </div>
     <div class="manor-main-wrapper">
       <div class="info-wrapper">
@@ -31,12 +31,14 @@
         <button class="link" @click="jump('#')">军事</button>
       </div>
     </div>
-    <div class="footer-wrapper">footer and content</div>
+
+    <VFooter />
   </div>
 </template>
 
 <script>
   import VResourceBar from './sub/resource-bar'
+  import VFooter from './sub/v-footer'
   import VBuildingList from './sub/building-list'
   import VProgress from './sub/progress'
 
@@ -48,7 +50,7 @@
         actionNumber: 23,
       }
     },
-    components: { VResourceBar, VProgress, VBuildingList },
+    components: { VResourceBar, VFooter, VProgress, VBuildingList },
     methods: {
       toggle: function (type) {
         this.activeType = type
@@ -189,13 +191,6 @@
           sawmill: '伐木',
         }
         return typeTrans[type]
-      },
-      /**
-       * 按钮点击事件（跳转）
-       * author：chen
-       */
-      jump (str) {
-        this.$router.push(str)
       },
     },
     computed: {
@@ -424,14 +419,4 @@
           height: 2.4rem
           line-height: 2.4rem
           text-align: center
-    .footer-wrapper
-      position: absolute
-      left: 0
-      bottom: 0
-      width: 100%
-      min-height: 80px
-      line-height: 80px
-      text-align: center
-      font-size: 2rem
-      background-color: #cccccc
 </style>

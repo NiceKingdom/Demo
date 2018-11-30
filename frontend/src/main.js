@@ -22,6 +22,15 @@ Vue.use(VueAxios, axios.create({
   },
 }))
 
+/* 全局混入，慎用 */
+Vue.mixin({
+  methods: {
+    jump (str) {
+      this.$router.push(str)
+    },
+  }
+})
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

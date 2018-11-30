@@ -1,49 +1,49 @@
 <template>
-    <!--<div>-->
-        <!--<VResourceBar />-->
-        <!--<div class="flex">-->
-            <!--<div class="manor">-->
-                <!--<h3 class="heading">领地</h3>-->
-                <!--<div>-->
-                    <!--<span>王国：{{kingdom}}；</span>-->
-                    <!--<span>领主：{{nickname}}；</span>-->
-                    <!--<span>坐标：X{{capitalX}}, Y{{capitalY}}</span>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<h3 class="heading">建筑队</h3>-->
-        <!--<div class="flex">-->
-            <!--<VProgress v-for="item in schedules" :process="item" :key="item.id" />-->
-        <!--</div>-->
-        <!--<div class="flex">-->
-            <!--<div class="building">-->
-                <!--<p>-->
-                    <!--<span style="font-size: 1.2rem">建筑清单：</span>-->
-                    <!--<span class="item"-->
-                          <!--v-for="type in buildType"-->
-                          <!--@click="toggle(type)"-->
-                          <!--:key="type">{{typeTrans(type)}}</span>-->
-                <!--</p>-->
-                <!--<label for="number">操作数量</label>-->
-                <!--<input type="number" id="number" v-model="actionNumber" class="btn-number">-->
+    <!--<div>
+        <VResourceBar />
+        <div class="flex">
+            <div class="manor">
+                <h3 class="heading">领地</h3>
+                <div>
+                    <span>王国：{{kingdom}}；</span>
+                    <span>领主：{{nickname}}；</span>
+                    <span>坐标：X{{capitalX}}, Y{{capitalY}}</span>
+                </div>
+            </div>
+        </div>
+        <h3 class="heading">建筑队</h3>
+        <div class="flex">
+            <VProgress v-for="item in schedules" :process="item" :key="item.id" />
+        </div>
+        <div class="flex">
+            <div class="building">
+                <p>
+                    <span style="font-size: 1.2rem">建筑清单：</span>
+                    <span class="item"
+                          v-for="type in buildType"
+                          @click="toggle(type)"
+                          :key="type">{{typeTrans(type)}}</span>
+                </p>
+                <label for="number">操作数量</label>
+                <input type="number" id="number" v-model="actionNumber" class="btn-number">
 
-                <!--<table>-->
-                    <!--<tr>-->
-                        <!--<th width="120">名称</th>-->
-                        <!--<th>拥有</th>-->
-                        <!--<th>时间</th>-->
-                        <!--<th>等级</th>-->
-                        <!--<th>占用</th>-->
-                        <!--<th>成本</th>-->
-                        <!--<th>产出</th>-->
-                        <!--<th>操作</th>-->
-                    <!--</tr>-->
-                    <!--<VBuildingList v-for="item in buildingList[activeType]" :key="item.name"-->
-                       <!--:building="item" @build="build" @destroy="destroy" />-->
-                <!--</table>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
+                <table>
+                    <tr>
+                        <th width="120">名称</th>
+                        <th>拥有</th>
+                        <th>时间</th>
+                        <th>等级</th>
+                        <th>占用</th>
+                        <th>成本</th>
+                        <th>产出</th>
+                        <th>操作</th>
+                    </tr>
+                    <VBuildingList v-for="item in buildingList[activeType]" :key="item.name"
+                       :building="item" @build="build" @destroy="destroy" />
+                </table>
+            </div>
+        </div>
+    </div>-->
   <div class="building-wrapper">
     <div class="building-header">
       <div class="logo-wrapper">
@@ -52,7 +52,7 @@
       <div class="resource-wrapper">
         <VResourceBar />
       </div>
-      <div class="building-name">{{kingdom}}</div>
+      <div class="building-name" @click="jump('/')">{{kingdom}}</div>
     </div>
     <div class="building-main-wrapper">
       <div class="info-wrapper">
@@ -60,17 +60,19 @@
         <div class="right"></div>
       </div>
       <div class="links-wrapper">
-        <!--<button class="link" @click="jump('/building')">建筑</button>-->
+        <button class="link" @click="jump('/building')">建筑</button>
         <button class="link" @click="jump('#')">地图</button>
         <button class="link" @click="jump('#')">军事</button>
       </div>
     </div>
-    <div class="footer-wrapper">footer and content</div>
+
+    <VFooter />
   </div>
 </template>
 
 <script>
   import VResourceBar from './sub/resource-bar'
+  import VFooter from './sub/v-footer'
   import VBuildingList from './sub/building-list'
   import VProgress from './sub/progress'
 
@@ -82,7 +84,7 @@
         actionNumber: 23,
       }
     },
-    components: { VResourceBar, VProgress, VBuildingList },
+    components: { VResourceBar, VFooter, VProgress, VBuildingList },
     methods: {
       toggle: function (type) {
         this.activeType = type
@@ -480,14 +482,14 @@
       .resource-wrapper
         display: inline-block
         margin: 0 1rem
-        width: 500px
+        width: 40%
         vertical-align: middle
       .building-name
         display: inline-block
         margin-left: 2rem
         height: 60px
         line-height: 60px
-        font-size: 1.8rem
+        font-size: 2rem
         text-align: left
         vertical-align: middle
     .building-main-wrapper
@@ -510,14 +512,4 @@
           height: 2.4rem
           line-height: 2.4rem
           text-align: center
-    .footer-wrapper
-      position: absolute
-      left: 0
-      bottom: 0
-      width: 100%
-      min-height: 80px
-      line-height: 80px
-      text-align: center
-      font-size: 2rem
-      background-color: #cccccc
 </style>

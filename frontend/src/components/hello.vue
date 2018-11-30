@@ -29,63 +29,67 @@
         <button class="register-btn" @click="goToRegister">注 册</button>
       </div>
     </div>
-    <div class="footer-wrapper">footer and content</div>
+
+    <VFooter />
   </div>
 </template>
 
 <script>
-export default {
-  name: 'Hello',
-  data () {
-    return {
-      msg: 'The king of the kingdom',
-      loginForm: {
-        email: '',
-        password: '',
-      }
-    }
-  },
-  methods: {
-    loginOperate: function () {
-      if (!this.loginForm.email || !this.loginForm.password) {
-        this.$swal({
-          text: '账号或密码未输入',
-          type: 'warning',
-        })
-        return false
-      }
+  import VFooter from './sub/v-footer'
 
-      this.axios.post('login', this.loginForm).then((response) => {
+  export default {
+    name: 'Hello',
+    components: { VFooter },
+    data () {
+      return {
+        msg: 'The king of the kingdom',
+        loginForm: {
+          email: '',
+          password: '',
+        }
+      }
+    },
+    methods: {
+      loginOperate: function () {
+        if (!this.loginForm.email || !this.loginForm.password) {
+          this.$swal({
+            text: '账号或密码未输入',
+            type: 'warning',
+          })
+          return false
+        }
+
+        this.axios.post('login', this.loginForm).then((response) => {
+          console.info(response.data)
+          this.$store.commit('setUser', response.data.user)
+          localStorage.setItem('user', JSON.stringify(response.data.user))
+          window.location = '/#/manor'
+        }).catch((error) => {
+          this.$swal({
+            text: (error.response.data) ? error.response.data : '服务器出错',
+            type: 'error',
+          })
+        })
+      },
+      goToRegister () {
+        console.log('goToRegister')
+        this.$router.push('/register')
+      }
+    },
+    created: function () {
+      this.axios.get('index').then((response) => {
         console.info(response.data)
-        this.$store.commit('setUser', response.data.user)
-        localStorage.setItem('user', JSON.stringify(response.data.user))
-        window.location = '/#/manor'
+        if (response.data.isLogin && localStorage.getItem('user')) {
+          window.location = '/#/manor'
+        }
       }).catch((error) => {
         this.$swal({
-          text: (error.response.data) ? error.response.data : '服务器出错',
+          text: (error.response && error.response.data) ? error.response : '服务器出错',
           type: 'error',
         })
       })
     },
-    goToRegister () {
-      console.log('goToRegister')
-      this.$router.push('/register')
-    }
-  },
-  created: function () {
-    this.axios.get('index').then((response) => {
-      console.info(response.data)
-      if (response.data.isLogin && localStorage.getItem('user')) {
-        window.location = '/#/manor'
-      }
-    }).catch((error) => {
-      this.$swal({
-        text: (error.response && error.response.data) ? error.response : '服务器出错',
-        type: 'error',
-      })
-    })
-  },
-}
+  }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
