@@ -44,16 +44,21 @@
 
       <div class="buttons-wrapper">
         <button class="register-btn" @click="registerOperate">注 册</button>
-        <button class="login-btn" @click="goToLogin">登 录</button>
+        <button class="login-btn" @click="jump('/')">登 录</button>
       </div>
     </div>
     <div class="footer-wrapper">footer and content</div>
+
+    <VFooter />
   </div>
 </template>
 
 <script>
+  import VFooter from './sub/v-footer'
+
   export default {
     name: 'register',
+    components: { VFooter },
     data () {
       return {
         signUpForm: {
@@ -69,8 +74,8 @@
         if (!this.signUpForm.email || !this.signUpForm.password || !this.signUpForm.kingdom ||
             !this.signUpForm.nickname) {
           this.$swal({
-            text: '请完整输入信息',
             type: 'warning',
+            text: '请完整输入信息',
           })
           return false
         }
@@ -83,14 +88,11 @@
           window.location = '/#/manor'
         }).catch((error) => {
           this.$swal({
-            text: (error.response.data) ? error.response.data : '服务器出错',
             type: 'error',
+            text: (error.response.data) ? error.response.data : '服务器出错',
           })
         })
       },
-      goToLogin: function () {
-        this.$router.push('/')
-      }
     }
   }
 </script>
@@ -161,14 +163,4 @@
           background-color: #0D293E
         .register-btn
           margin-right: 2rem
-    .footer-wrapper
-      position: absolute
-      left: 0
-      bottom: 0
-      width: 100%
-      min-height: 80px
-      line-height: 80px
-      text-align: center
-      font-size: 2rem
-      background-color: #cccccc
 </style>

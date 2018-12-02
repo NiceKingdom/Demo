@@ -177,7 +177,7 @@ class UserController extends Controller
      * @catalog 前后端接口/用户
      * @title 用户注销
      * @description -
-     * @method post
+     * @method get
      * @url https://{url}/logout
      * @return Site home page in outside
      * @number 99
