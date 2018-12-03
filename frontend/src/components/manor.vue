@@ -1,6 +1,8 @@
 <template>
     <div>
-        <VResourceBar />
+      <div>{{actionNumber}}</div>
+      <div>{{resource.people.value}}</div>
+        <!--<VResourceBar />-->
         <div class="flex">
             <div class="manor">
                 <h3 class="heading">领地</h3>
@@ -169,6 +171,12 @@
         }
         return typeTrans[type]
       },
+      test: function () {
+        this.actionNumber++
+        this.$store.commit('secUpdate')
+        console.info(this.resource.people.value)
+        // this.resource.people.value++
+      },
     },
     computed: {
       nickname () {
@@ -185,6 +193,9 @@
       },
       resource () {
         return this.$store.state.resource
+      },
+      people () {
+        return this.$store.state.resource.people.value
       },
       // 建筑进程
       schedules () {
@@ -309,14 +320,7 @@
       }
       this.$store.commit('setResource', resource)
 
-      var save = function () {
-        let keepLive = Math.ceil(new Date() / 1000) - localStorage.getItem('keepLive')
-        if (keepLive > 15) {
-          this.$store.dispatch('save', resource, keepLive)
-        }
-        setTimeout(save, 15000)
-      }
-      setTimeout(save, 15000)
+      setInterval(this.test, 1000)
     },
   }
 </script>

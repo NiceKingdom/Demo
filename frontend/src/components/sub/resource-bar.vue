@@ -1,11 +1,12 @@
 <template>
     <div class="flex-block">
         <div class="flex-row">
-            <span class="flex-item" v-for="item in resource" :key="item.name">
-                <b style="color: #000;">{{item.name}}</b>：
-                <span style="color: #636363;">{{item.value}}</span>
-                (<span class="b">{{item.output}}</span>)
-            </span>
+          <span>{{resource}}</span>
+            <!--<span class="flex-item" v-for="item in resource" :key="item.name">-->
+                <!--<b style="color: #000;">{{item.name}}</b>：-->
+                <!--<span style="color: #636363;">{{item.value}}</span>-->
+                <!--(<span class="b">{{item.output}}</span>)-->
+            <!--</span>-->
         </div>
     </div>
 </template>
@@ -17,7 +18,18 @@ export default {
     resource () {
       return this.$store.state.resource
     },
+    res () {
+      return new Date()
+    },
   },
+  methods: {
+    test: function () {
+      return true
+    },
+  },
+  mounted () {
+    setInterval(this.test, 1000)
+  }
 }
 </script>
 

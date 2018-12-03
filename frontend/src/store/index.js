@@ -34,21 +34,33 @@ export default new VueX.Store({
     increment: state => state.count++,
     decrement: state => state.count--,
 
-    // 分支：resource-updata 领地的资源，会随时间匀速增长（函数未完成）
-    secUpdate: (state) => {
-      // https://stackoverflow.com/questions/32422867/when-do-i-need-to-use-hasownproperty
-      Object.keys(state.resource).forEach(function (key) {
-        let prod = state.resource[key].output * 1
-        prod = (prod + '').split('.')
-        state.resource[key].value += Number(prod[0])
-        state.resource[key].oddment += Number(prod[1])
-        if (state.resource[key].oddment > 2.5) {
-          prod = (state.resource[key].oddment + '').split('.')
-          state.resource[key].value += Number(prod[0])
-          state.resource[key].oddment += Number(prod[1])
-        }
-      })
+    secUpdate (state) {
+      state.resource.people.value++
+      console.info(state.resource.people.value)
     },
+    // secUpdate: (state) => {
+    //   for (let i = 0; i < state.resource.length; i++) {
+    //     state.resource[i].value += 1
+    //   }
+    // },
+
+    // // 分支：resource-updata 领地的资源，会随时间匀速增长（函数未完成）
+    // secUpdate: (state) => {
+    //   // https://stackoverflow.com/questions/32422867/when-do-i-need-to-use-hasownproperty
+    //   Object.keys(state.resource).forEach(function (key) {
+    //     // 计算当前 tick 资源产出
+    //     let prod = state.resource[key].output * 1
+    //     prod = (prod + '').split('.')
+    //     state.resource[key].value += Number(prod[0])
+    //     state.resource[key].oddment += Number(prod[1])
+    //     // 小数变量满 2.5 则调整到整数
+    //     if (state.resource[key].oddment > 2.5) {
+    //       prod = (state.resource[key].oddment + '').split('.')
+    //       state.resource[key].value += Number(prod[0])
+    //       state.resource[key].oddment += Number(prod[1])
+    //     }
+    //   })
+    // },
 
     /* 设定 */
     setUser (state, userData) {
@@ -104,10 +116,10 @@ export default new VueX.Store({
     },
   },
   actions: {
-    update (context, interval) {
-      if (interval > Math.ceil(new Date() / 1000) + 15) {
-        context.commit('secUpdate')
-      }
+    update (context) {
+      setInterval(() => {
+        context.commit('secUpdate', context)
+      }, 1000)
     }
-  },
+  }
 })
