@@ -41,20 +41,29 @@ export default new VueX.Store({
     increment: state => state.count++,
     decrement: state => state.count--,
 
-    // 更新时间
-    secUpdate: (state) => {
-      // https://stackoverflow.com/questions/32422867/when-do-i-need-to-use-hasownproperty
-      Object.keys(state.resource).forEach(function (key) {
-        let prod = state.resource[key].output * 1
-        prod = (prod + '').split('.')
-        state.resource[key].value += Number(prod[0])
-        state.resource[key].oddment += Number(prod[1])
-        if (state.resource[key].oddment > 2.5) {
-          prod = (state.resource[key].oddment + '').split('.')
-          state.resource[key].value += Number(prod[0])
-          state.resource[key].oddment += Number(prod[1])
-        }
-      })
+    // 资源数量随时间匀速增长
+    // secUpdate: (state) => {
+    //   // https://stackoverflow.com/questions/32422867/when-do-i-need-to-use-hasownproperty
+    //   Object.keys(state.resource).forEach(function (key) {
+    //     let prod = state.resource[key].output * 1
+    //     prod = (prod + '').split('.')
+    //     state.resource[key].value += Number(prod[0])
+    //     state.resource[key].oddment += Number(prod[1])
+    //     if (state.resource[key].oddment > 2.5) {
+    //       prod = (state.resource[key].oddment + '').split('.')
+    //       state.resource[key].value += Number(prod[0])
+    //       state.resource[key].oddment += Number(prod[1])
+    //     }
+    //   })
+    // },
+
+    // update-resource 资源数量随时间匀速增长 包含函数：setUpdate、update、以及resource-bar中的mounted
+    setUpdate (state) {
+      // state.resource.people.value++ ( <= just a test-code)
+      let resource = state.resource
+      for (let k in resource) {
+        resource[k].value++
+      }
     },
 
     /* 设定 */
@@ -111,10 +120,15 @@ export default new VueX.Store({
     },
   },
   actions: {
+    // update (context, interval) {
+    //   if (interval > Math.ceil(new Date() / 1000) + 15) {
+    //     context.commit('secUpdate')
+    //   }
+    // }
     update (context, interval) {
-      if (interval > Math.ceil(new Date() / 1000) + 15) {
-        context.commit('secUpdate')
-      }
+      setInterval(() => {
+        context.commit('setUpdate')
+      }, interval)
     }
   },
 })

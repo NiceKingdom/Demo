@@ -18,6 +18,9 @@
         return this.$store.state.resource
       },
     },
+    mounted () {
+      this.$store.dispatch('update', 1000)
+    }
   }
 </script>
 
