@@ -13,7 +13,7 @@ import store from './store'
 
 Vue.use(VueSwal)
 Vue.use(VueAxios, axios.create({
-  baseURL: 'http://www.nice-kingdom.com/',
+  baseURL: 'http://www.nice-kingdom.com',
   transformRequest: [function (data) {
     return qs.stringify(data)
   }],
@@ -21,6 +21,15 @@ Vue.use(VueAxios, axios.create({
     'Content-Type': 'application/x-www-form-urlencoded'
   },
 }))
+
+/* 全局混入，慎用 */
+Vue.mixin({
+  methods: {
+    jump (str) {
+      this.$router.push(str)
+    },
+  }
+})
 
 Vue.config.productionTip = false
 

@@ -36,6 +36,10 @@ class CreateResourcesTable extends Migration
             $table->unsignedInteger('money')->default(3500); # 钱财
             $table->float('moneyChip', 5, 4)->default(0); # 散碎
             $table->mediumInteger('moneyOutput')->default(0); # 实际产出
+
+            $table->unsignedInteger('area')->default(200); # 面积
+            $table->float('areaChip', 5, 4)->default(0); # 散碎
+            $table->mediumInteger('areaOutput')->default(0); # 实际产出
             $table->timestamps();
         });
     }
