@@ -115,12 +115,12 @@
           width: 300px
           height: 60px
       .manor-name
-        display: inline-block
+        margin 0 auto
         width: 40%
         height: 60px
         line-height: 60px
         font-size: 1.8rem
-        text-align: left
+        text-align: center
         vertical-align: middle
     .manor-main-wrapper
       width: 100%
