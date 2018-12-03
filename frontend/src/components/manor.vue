@@ -1,27 +1,10 @@
 <template>
-<<<<<<< HEAD
   <div class="manor-wrapper">
     <div class="manor-header">
       <div class="logo-wrapper">
         <img class="logo" src="../assets/logo.png" alt="">
       </div>
       <div class="manor-name" @click="jump('manor')">{{kingdom}}</div>
-=======
-    <div>
-      <div>{{actionNumber}}</div>
-      <div>{{resource.people.value}}</div>
-        <!--<VResourceBar />-->
-        <div class="flex">
-            <div class="manor">
-                <h3 class="heading">领地</h3>
-                <div>
-                    <span>王国：{{kingdom}}；</span>
-                    <span>领主：{{nickname}}；</span>
-                    <span>坐标：X{{capitalX}}, Y{{capitalY}}</span>
-                </div>
-            </div>
-        </div>
->>>>>>> aa5586e7fd5386ad7657ad42adeeb9c7dbfff1f6
     </div>
     <div class="manor-main-wrapper">
       <div class="info-wrapper">
@@ -45,7 +28,6 @@
   import VFooter from './sub/v-footer'
   import VBuildingList from './sub/building-list'
   import VProgress from './sub/progress'
-
   export default {
     name: 'manor',
     data () {
@@ -71,12 +53,6 @@
           })
         })
       },
-      test: function () {
-        this.actionNumber++
-        this.$store.commit('secUpdate')
-        console.info(this.resource.people.value)
-        // this.resource.people.value++
-      },
     },
     computed: {
       nickname () {
@@ -94,28 +70,6 @@
       resource () {
         return this.$store.state.resource
       },
-<<<<<<< HEAD
-=======
-      people () {
-        return this.$store.state.resource.people.value
-      },
-      // 建筑进程
-      schedules () {
-        return this.$store.state.schedules
-      },
-      // 建筑清单
-      buildingList () {
-        return this.$store.state.buildingList
-      },
-      // 建筑清单的类型
-      buildType: function () {
-        let result = []
-        for (let key in this.buildingList) {
-          result.push(key)
-        }
-        return result
-      },
->>>>>>> aa5586e7fd5386ad7657ad42adeeb9c7dbfff1f6
     },
     created: function () {
       // 确认登录状态（检查心跳包）
@@ -134,112 +88,9 @@
         })
         localStorage.setItem('heartBeat', Math.ceil(new Date() / 1000).toString())
       }
-
       // 赋值用户数据
       let user = JSON.parse(localStorage.getItem('user'))
       this.$store.commit('setUser', user)
-<<<<<<< HEAD
-=======
-
-      // 假装成功请求建筑清单
-      let buildingList = {
-        list: {
-          farm: [
-            {
-              name: '一级农田',
-              level: 1,
-              time: 75,
-              product: {
-                food: 1
-              },
-              material: {
-                wood: 10
-              },
-              occupy: {
-                people: 1
-              }
-            },
-            {
-              name: '二级农田',
-              level: 2,
-              time: 105,
-              product: {
-                food: 1.2
-              },
-              material: {
-                wood: 13
-              },
-              occupy: {
-                people: 1
-              }
-            }
-          ],
-          sawmill: [
-            {
-              name: '一级伐木营地',
-              level: 1,
-              time: 120,
-              product: {
-                wood: 0.6
-              },
-              material: {
-                money: 10
-              },
-              occupy: {
-                people: 1
-              }
-            },
-            {
-              name: '二级伐木营地',
-              level: 2,
-              time: 165,
-              product: {
-                wood: 1.6
-              },
-              material: {
-                money: 28
-              },
-              occupy: {
-                people: 2
-              }
-            }
-          ]
-        },
-        building: {
-          id: 26,
-          userId: 26,
-          farm01: 13,
-          farm02: 0,
-          sawmill01: 0,
-          sawmill02: 0,
-          created_at: '2018-09-16 10:40:52',
-          updated_at: '2018-09-16 15:04:54'
-        }
-      }
-      this.$store.commit('setBuildingList', buildingList)
-
-      // 假装成功请求领地资源
-      let resource = {
-        people: 200,
-        peopleChip: 0.00,
-        peopleOutput: 0.00,
-        food: 3000,
-        foodChip: 0.0000,
-        foodOutput: 0,
-        wood: 2000,
-        woodChip: 0.0000,
-        woodOutput: 0,
-        stone: 1000,
-        stoneChip: 0.0000,
-        stoneOutput: 0,
-        money: 3500,
-        moneyChip: 0.0000,
-        moneyOutput: 0,
-      }
-      this.$store.commit('setResource', resource)
-
-      setInterval(this.test, 1000)
->>>>>>> aa5586e7fd5386ad7657ad42adeeb9c7dbfff1f6
     },
   }
 </script>
