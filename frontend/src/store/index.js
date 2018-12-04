@@ -42,8 +42,35 @@ export default new VueX.Store({
     decrement: state => state.count--,
 
     // 资源数量随时间匀速增长
+    setUpdate (state) {
+      let Kind = ['people', 'food', 'wood', 'stone', 'money', 'area']
+      Kind.forEach(MathUpdate)
+      function MathUpdate (item) {
+        let resource = state.resource
+        let SecOutput = resource[item].output / 3600
+        resource[item].value += Math.floor(SecOutput)
+        resource[item].oddment += SecOutput - Math.floor(SecOutput)
+        if (resource.people.oddment > 1) {
+          state.resource[item].value += 1
+          state.resource[item].oddment -= 1
+        }
+      }
+    },
+
+    // setUpdate (state) {
+    //   let resource = state.resource
+    //   const SecOutput = resource.people.output / 3600
+    //   resource.people.value += Math.floor(SecOutput)
+    //   resource.people.oddment += SecOutput - Math.floor(SecOutput)
+    //   // console.log(resource.people.oddment)
+    //   if (resource.people.oddment > 1) {
+    //     state.resource.people.value += 1
+    //     state.resource.people.oddment -= 1
+    //   }
+
     // secUpdate: (state) => {
     //   // https://stackoverflow.com/questions/32422867/when-do-i-need-to-use-hasownproperty
+    //
     //   Object.keys(state.resource).forEach(function (key) {
     //     let prod = state.resource[key].output * 1
     //     prod = (prod + '').split('.')
@@ -58,13 +85,13 @@ export default new VueX.Store({
     // },
 
     // update-resource 资源数量随时间匀速增长 包含函数：setUpdate、update、以及resource-bar中的mounted
-    setUpdate (state) {
-      // state.resource.people.value++ ( <= just a test-code)
-      let resource = state.resource
-      for (let k in resource) {
-        resource[k].value++
-      }
-    },
+    // setUpdate (state) {
+    //   // state.resource.people.value++ ( <= just a test-code)
+    //   let resource = state.resource
+    //   for (let k in resource) {
+    //     resource[k].value++
+    //   }
+    // },
 
     /* 设定 */
     setUser (state, userData) {
@@ -125,6 +152,7 @@ export default new VueX.Store({
     //     context.commit('secUpdate')
     //   }
     // }
+
     update (context, interval) {
       setInterval(() => {
         context.commit('setUpdate')
