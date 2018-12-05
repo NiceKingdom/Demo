@@ -248,11 +248,17 @@
     },
     created: function () {
       // 确认登录状态（检查心跳包）
+      let isLogin = localStorage.getItem('isLogin')
+      if (!isLogin || isLogin === 'false') {
+        window.location = '/#/'
+      }
+
       let heartBeat = localStorage.getItem('heartBeat')
       if (!heartBeat || heartBeat < Math.ceil(new Date() / 1000) - 600) {
         this.axios.get('index').then((response) => {
           if (!response.data.isLogin) {
             this.axios.get('logout')
+            localStorage.setItem('isLogin', 'false')
             window.location = '/#/'
           }
         }).catch((error) => {
