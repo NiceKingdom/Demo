@@ -41,20 +41,20 @@ export default new VueX.Store({
     increment: state => state.count++,
     decrement: state => state.count--,
 
-    // 更新时间
-    secUpdate: (state) => {
-      // https://stackoverflow.com/questions/32422867/when-do-i-need-to-use-hasownproperty
-      Object.keys(state.resource).forEach(function (key) {
-        let prod = state.resource[key].output * 1
-        prod = (prod + '').split('.')
-        state.resource[key].value += Number(prod[0])
-        state.resource[key].oddment += Number(prod[1])
-        if (state.resource[key].oddment > 2.5) {
-          prod = (state.resource[key].oddment + '').split('.')
-          state.resource[key].value += Number(prod[0])
-          state.resource[key].oddment += Number(prod[1])
+    // 资源自增：资源数量随时间匀速增长，使用函数setUpdate和update
+    setUpdate (state) {
+      let Kind = ['people', 'food', 'wood', 'stone', 'money', 'area']
+      Kind.forEach(MathUpdate)
+      function MathUpdate (item) {
+        let resource = state.resource
+        let SecOutput = resource[item].output / 3600
+        resource[item].value += Math.floor(SecOutput)
+        resource[item].oddment += SecOutput - Math.floor(SecOutput)
+        if (resource.people.oddment > 1) {
+          state.resource[item].value++
+          state.resource[item].oddment--
         }
-      })
+      }
     },
 
     /* 设定 */
@@ -112,9 +112,9 @@ export default new VueX.Store({
   },
   actions: {
     update (context, interval) {
-      if (interval > Math.ceil(new Date() / 1000) + 15) {
-        context.commit('secUpdate')
-      }
+      setInterval(() => {
+        context.commit('setUpdate')
+      }, interval)
     }
   },
 })

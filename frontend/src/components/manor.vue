@@ -28,7 +28,6 @@
   import VFooter from './sub/v-footer'
   import VBuildingList from './sub/building-list'
   import VProgress from './sub/progress'
-
   export default {
     name: 'manor',
     data () {
@@ -89,7 +88,6 @@
         })
         localStorage.setItem('heartBeat', Math.ceil(new Date() / 1000).toString())
       }
-
       // 赋值用户数据
       let user = JSON.parse(localStorage.getItem('user'))
       this.$store.commit('setUser', user)
@@ -117,12 +115,12 @@
           width: 300px
           height: 60px
       .manor-name
-        display: inline-block
+        margin 0 auto
         width: 40%
         height: 60px
         line-height: 60px
         font-size: 1.8rem
-        text-align: left
+        text-align: center
         vertical-align: middle
     .manor-main-wrapper
       width: 100%
