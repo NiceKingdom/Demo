@@ -82,9 +82,12 @@
 
         this.axios.post('register', this.signUpForm).then((response) => {
           console.info(response.data)
-          let result = response.data
-          this.$store.commit('setUser', result.user)
-          localStorage.setItem('user', JSON.stringify(result.user))
+          this.$store.commit('setUser', response.user)
+          localStorage.setItem('user', JSON.stringify(response.data.user))
+          localStorage.setItem('resource', JSON.stringify(response.data.resource))
+          localStorage.setItem('building', JSON.stringify(response.data.building))
+          localStorage.setItem('heartBeat', Math.ceil(new Date() / 1000).toString())
+          localStorage.setItem('isLogin', 'true')
           window.location = '/#/manor'
         }).catch((error) => {
           this.$swal({

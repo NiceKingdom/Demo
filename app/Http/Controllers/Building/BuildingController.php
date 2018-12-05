@@ -85,7 +85,7 @@ class BuildingController extends Controller
      * @title 建筑动工
      * @description 暂无
      * @method get
-     * @url https://{url}/building/list
+     * @url https://{url}/building/build
      * @param type 必选 string 建筑类型，最长 20 字符
      * @param level 必选 int 建筑级别，最小为 1
      * @param number 可选 int 建筑数量，默认且最小为 1
@@ -103,7 +103,7 @@ class BuildingController extends Controller
      * @title 取消建筑
      * @description 暂无
      * @method get
-     * @url https://{url}/building/list
+     * @url https://{url}/building/recall
      * @param id 必选 施工队 ID
      * @return ["succeed", "已取消该施工项目"]
      * @number 50

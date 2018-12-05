@@ -53,6 +53,7 @@
           localStorage.setItem('resource', JSON.stringify(response.data.resource))
           localStorage.setItem('building', JSON.stringify(response.data.building))
           localStorage.setItem('heartBeat', Math.ceil(new Date() / 1000).toString())
+          localStorage.setItem('isLogin', 'true')
           window.location = '/#/manor'
         }).catch((error) => {
           this.$swal({
