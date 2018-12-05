@@ -25,7 +25,7 @@
 </script>
 
 <style scoped>
-  .flex-block{
+  .flex-block {
     width: 100%;
   }
   .flex-row {

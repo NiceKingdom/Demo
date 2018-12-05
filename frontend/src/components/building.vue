@@ -368,6 +368,7 @@
       .info-wrapper
         padding: 2rem
         .left
+          padding: 5px
           display: inline-block
           margin-right: 1.2rem
           border: 1px solid #cccccc
