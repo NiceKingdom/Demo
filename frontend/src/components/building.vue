@@ -45,7 +45,7 @@
       </div>
       <div class="links-wrapper">
         <button class="link" @click="jump('building')">建筑</button>
-        <button class="link" @click="jump('#')">地图</button>
+        <button class="link" @click="jump('plat')">地图</button>
         <button class="link" @click="jump('#')">军事</button>
         <button class="link" @click="click()">测试</button>
       </div>
@@ -62,7 +62,7 @@
   import VProgress from './sub/progress'
 
   export default {
-    name: 'manor',
+    name: 'building',
     data () {
       return {
         activeType: 'farm',
@@ -372,6 +372,8 @@
     .building-main-wrapper
       width: 100%
       .info-wrapper
+        display: flex
+        justify-content: center
         padding: 2rem
         .left
           padding: 5px
