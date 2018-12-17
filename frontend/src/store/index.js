@@ -38,10 +38,11 @@ export default new VueX.Store({
     }
   },
   mutations: {
-    increment: state => state.count++,
-    decrement: state => state.count--,
-
-    // 资源自增：资源数量随时间匀速增长，使用函数setUpdate和update
+    /**
+     * 资源自增
+     * 资源数量随时间匀速增长，使用函数setUpdate和update
+     * @param state
+     */
     setUpdate (state) {
       let Kind = ['people', 'food', 'wood', 'stone', 'money', 'area']
       Kind.forEach(MathUpdate)
@@ -57,7 +58,11 @@ export default new VueX.Store({
       }
     },
 
-    /* 设定 */
+    /**
+     * 初始化用户的基础信息
+     * @param state
+     * @param userData
+     */
     setUser (state, userData) {
       state.loginName = userData.nickname
       state.nickname = userData.nickname
@@ -67,6 +72,11 @@ export default new VueX.Store({
       state.capitalY = capital[1]
     },
 
+    /**
+     * 初始化用户的施工队等队列信息
+     * @param state
+     * @param shcedules
+     */
     setSchedules (state, shcedules) {
       state.schedules = shcedules
       for (let i = 0; i < shcedules.length; i++) {
@@ -74,8 +84,13 @@ export default new VueX.Store({
       }
     },
 
+    /**
+     * 初始化用户的建筑数据
+     * 将已有建筑数量与建筑清单结合
+     * @param state
+     * @param buildingList 原始建筑数据
+     */
     setBuildingList (state, buildingList) {
-      // 将已有建筑数量与建筑清单结合
       let buildingKeys = Object.keys(buildingList.building)
       let keys = ['farm', 'sawmill']
       for (let i = 0; i < buildingKeys.length; i++) {
@@ -90,6 +105,11 @@ export default new VueX.Store({
       state.buildingList = buildingList.list
     },
 
+    /**
+     * 初始化用户的资源数据
+     * @param state
+     * @param resourceData 原始资源数据
+     */
     setResource (state, resourceData) {
       // 语义化资源名称
       let resourceTrans = [

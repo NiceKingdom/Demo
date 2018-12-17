@@ -106,6 +106,11 @@ class BuildingTest extends TestCase
      */
     public function testScheduleHasOneAgain()
     {
+        // Mock Start
+        require_once 'testHelper.php';
+        setBuildingListOnInstant();
+        // Mock End
+
         $user = User::find(26);
         $response = $this->actingAs($user)
             ->json('GET', '/building/schedule');
