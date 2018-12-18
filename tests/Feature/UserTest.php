@@ -8,23 +8,15 @@ use Tests\TestCase;
 class UserTest extends TestCase
 {
     /**
-     * 环境重置
-     */
-    public function development()
-    {
-        exec('php artisan migrate:refresh --seed');
-        exec('echo "" > storage/logs/laravel.log');
-
-        $this->assertEquals(0, 0);
-    }
-
-    /**
      * 用户注册
      */
     public function testRegister()
     {
-        $this->development();
+        // Mock
+        require_once 'testHelper.php';
+        initDevelopment();
 
+        // Logic
         $response = $this->withHeaders([
             'Referer' => 'http://www.nice-kingdom.uio/register',
         ])->json('POST', '/register', [

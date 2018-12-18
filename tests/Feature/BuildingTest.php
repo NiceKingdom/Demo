@@ -12,7 +12,13 @@ class BuildingTest extends TestCase
      */
     public function testBuildingList()
     {
-        $user = User::find(26);
+        // Mock
+        $this->json('GET', '/reset/redis');
+        require_once 'testHelper.php';
+        initDevelopment();
+
+        // Logic
+        $user = User::find(16);
         $response = $this->actingAs($user)
             ->json('GET', '/building/list');
 
@@ -24,7 +30,7 @@ class BuildingTest extends TestCase
      */
     public function testSchedule()
     {
-        $user = User::find(26);
+        $user = User::find(16);
         $response = $this->actingAs($user)
             ->json('GET', '/building/schedule');
 
@@ -36,7 +42,7 @@ class BuildingTest extends TestCase
      */
     public function testBuild()
     {
-        $user = User::find(26);
+        $user = User::find(16);
         $response = $this->actingAs($user)
             ->json('POST', '/building/build', [
                 'type' => 'farm',
@@ -52,7 +58,7 @@ class BuildingTest extends TestCase
      */
     public function testScheduleHasOne()
     {
-        $user = User::find(26);
+        $user = User::find(16);
         $response = $this->actingAs($user)
             ->json('GET', '/building/schedule');
 
@@ -64,7 +70,7 @@ class BuildingTest extends TestCase
      */
     public function testDestroy()
     {
-        $user = User::find(26);
+        $user = User::find(16);
         $response = $this->actingAs($user)
             ->json('POST', '/building/destroy', [
                 'type' => 'farm',
@@ -80,7 +86,7 @@ class BuildingTest extends TestCase
      */
     public function testScheduleHasZero()
     {
-        $user = User::find(26);
+        $user = User::find(16);
         $response = $this->actingAs($user)
             ->json('GET', '/building/schedule');
 
@@ -92,7 +98,7 @@ class BuildingTest extends TestCase
      */
     public function testRecall()
     {
-        $user = User::find(26);
+        $user = User::find(16);
         $response = $this->actingAs($user)
             ->json('POST', '/building/recall', [
                 'id' => 76,
@@ -106,15 +112,18 @@ class BuildingTest extends TestCase
      */
     public function testScheduleHasOneAgain()
     {
-        // Mock Start
+        // Mock
         require_once 'testHelper.php';
         setBuildingListOnInstant();
-        // Mock End
 
-        $user = User::find(26);
+        // Logic
+        $user = User::find(16);
         $response = $this->actingAs($user)
             ->json('GET', '/building/schedule');
 
         $response->assertStatus(200);
+
+        // UnMock
+        $this->json('GET', '/reset/redis');
     }
 }

@@ -1,11 +1,24 @@
 <?php
+
+/**
+ * 初始化环境
+ */
+function initDevelopment()
+{
+    exec('php artisan migrate:refresh --seed');
+    exec('echo "" > storage/logs/laravel.log');
+}
+
+/**
+ * 设置建筑清单（瞬时）
+ */
 function setBuildingListOnInstant() {
     $list = [
         'farm' => [
             [
                 'name' => '一级农田',
                 'level' => 1,
-                'time' => 75,
+                'time' => 1,
                 'product' => [
                     'food' => 40,
                 ],
