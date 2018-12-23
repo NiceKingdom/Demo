@@ -1,4 +1,5 @@
 <template>
+  <div class="building">
   <div class="building-wrapper">
     <div class="building-header">
       <div class="logo-wrapper">
@@ -50,8 +51,9 @@
         <button class="link" @click="click()">测试</button>
       </div>
     </div>
+  </div>
 
-    <VFooter />
+  <VFooter class="footer" />
   </div>
 </template>
 
@@ -339,6 +341,7 @@
 
 <style scoped lang="stylus">
   .building-wrapper
+    min-height 87.88vh
     width: 100%
     .building-header
       padding: 2rem 3rem
