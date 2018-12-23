@@ -23,7 +23,7 @@
                     @click="toggle(type)"
                     :key="type">{{typeTrans(type)}}</span>
             </p>
-            <label for="number">操作数量</label>
+            <label for="number">数量</label>
             <input type="number" id="number" v-model="actionNumber" class="btn-number">
 
             <table>
@@ -66,7 +66,7 @@
     data () {
       return {
         activeType: 'farm',
-        actionNumber: 23,
+        actionNumber: 1,
       }
     },
     components: { VResourceBar, VFooter, VProgress, VBuildingList },
@@ -82,109 +82,57 @@
           })
           return false
         }
-
         data.type = this.activeType
         data.number = this.actionNumber
         if (data) {
-          // 假装成功发送建筑请求
-          console.info(data)
-
-          // 假装成功请求当前领地资源
-          let resource = {
-            people: 200,
-            peopleChip: 0.00,
-            peopleOutput: 0.00,
-            food: 3000,
-            foodChip: 0.0000,
-            foodOutput: 0,
-            wood: 2000,
-            woodChip: 0.0000,
-            woodOutput: 0,
-            stone: 1000,
-            stoneChip: 0.0000,
-            stoneOutput: 0,
-            money: 3500,
-            moneyChip: 0.0000,
-            moneyOutput: 0,
-          }
-          this.$store.commit('setResource', resource)
-
-          // 假装成功请求当前建筑清单
-          let buildingList = {
-            list: {
-              farm: [
-                {
-                  name: '一级农田',
-                  level: 1,
-                  time: 75,
-                  product: {
-                    food: 1
-                  },
-                  material: {
-                    wood: 10
-                  },
-                  occupy: {
-                    people: 1
-                  }
-                },
-                {
-                  name: '二级农田',
-                  level: 2,
-                  time: 105,
-                  product: {
-                    food: 1.2
-                  },
-                  material: {
-                    wood: 13
-                  },
-                  occupy: {
-                    people: 1
-                  }
-                }
-              ],
-              sawmill: [
-                {
-                  name: '一级伐木营地',
-                  level: 1,
-                  time: 120,
-                  product: {
-                    wood: 0.6
-                  },
-                  material: {
-                    money: 10
-                  },
-                  occupy: {
-                    people: 1
-                  }
-                },
-                {
-                  name: '二级伐木营地',
-                  level: 2,
-                  time: 165,
-                  product: {
-                    wood: 1.6
-                  },
-                  material: {
-                    money: 28
-                  },
-                  occupy: {
-                    people: 2
-                  }
-                }
-              ]
-            },
-            building: {
-              id: 26,
-              userId: 26,
-              farm01: 13,
-              farm02: 2,
-              sawmill01: 0,
-              sawmill02: 0,
-              created_at: '2018-09-16 10:40:52',
-              updated_at: '2018-09-16 15:04:54'
+          this.axios.post('building/build', data).then((response) => {
+            let type = 'success'
+            if (response.data[0] === 'failed') {
+              type = 'error'
             }
-          }
-          this.$store.commit('setBuildingList', buildingList)
+            this.$swal({
+              text: response.data[1],
+              type: type,
+            })
+          }).catch((error) => {
+            this.$swal({
+              text: (error.response.data) ? error.response.data : '服务器出错',
+              type: 'error',
+            })
+          })
+
+          // 请求当前领地的资源
+          this.axios.get('user/get-resource').then((response) => {
+            console.info(response)
+            localStorage.setItem('resource', JSON.stringify(response.data))
+            this.$store.commit('setResource', response.data)
+          }).catch((error) => {
+            this.$swal({
+              text: (error.response.data) ? error.response.data : '服务器出错',
+              type: 'error',
+            })
+          })
+
+          // 获取建筑清单并赋值
+          this.axios.get('building/list').then((response) => {
+            localStorage.setItem('building', JSON.stringify(response.data.building))
+            localStorage.setItem('buildingList', JSON.stringify(response.data.list))
+            this.$store.commit('setBuildingList', response.data)
+          }).catch((error) => {
+            this.$swal({
+              text: (error.response.data) ? error.response.data : '服务器出错',
+              type: 'error',
+            })
+          })
+
+          this.axios.get('building/schedule').then((response) => {
+            this.$store.commit('setSchedules', response.data)
+          }).catch((error) => {
+            this.$swal({
+              text: (error.response.data) ? error.response.data : '服务器出错',
+              type: 'error',
+            })
+          })
         }
       },
       destroy: function (data) {
@@ -287,49 +235,16 @@
         })
       })
 
-      // 假装成功请求已建筑列表
-      let schedules = [
-        {
-          id: 76,
-          userId: 26,
-          name: '建筑队',
-          startTime: 1537768864,
-          endTime: 1537768939,
-          type: 'farm',
-          level: 1,
-          action: 1,
-          number: 1,
-          created_at: '2018-09-16 10:40:52',
-          updated_at: '2018-09-24 14:01:04'
-        },
-        {
-          id: 77,
-          userId: 26,
-          name: '建筑队',
-          startTime: 1537768865,
-          endTime: 1537768940,
-          type: 'farm',
-          level: 1,
-          action: 1,
-          number: 1,
-          created_at: '2018-09-16 10:40:52',
-          updated_at: '2018-09-24 14:01:05'
-        },
-        {
-          id: 78,
-          userId: 26,
-          name: '建筑队',
-          startTime: 0,
-          endTime: 0,
-          type: '',
-          level: 0,
-          action: 0,
-          number: 0,
-          created_at: '2018-09-16 10:40:52',
-          updated_at: '2018-09-16 10:40:52'
-        }
-      ]
-      this.$store.commit('setSchedules', schedules)
+      // 获取已建筑列表
+      this.axios.get('building/schedule').then((response) => {
+        console.info(response.data)
+        this.$store.commit('setSchedules', response.data)
+      }).catch((error) => {
+        this.$swal({
+          text: (error.response.data) ? error.response.data : '服务器出错',
+          type: 'error',
+        })
+      })
 
       // 赋值领地资源
       this.$store.commit('setResource', JSON.parse(localStorage.getItem('resource')))
