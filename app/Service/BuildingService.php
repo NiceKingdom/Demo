@@ -116,7 +116,7 @@ class BuildingService
     public function buildBefore(string $type, int $level, int $number)
     {
         if (!$schedule = $this->getSleep()) {
-            return ['failed', '无可用建筑'];
+            return ['failed', '施工队都在忙碌'];
         }
 
         $startTime = time();
