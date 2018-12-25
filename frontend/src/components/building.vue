@@ -1,5 +1,5 @@
 <template>
-  <div class="building">
+  <div>
   <div class="building-wrapper">
     <div class="building-header">
       <div class="logo-wrapper">

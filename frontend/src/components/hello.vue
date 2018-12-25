@@ -1,23 +1,24 @@
 <template>
-  <div class="login-wrapper">
-    <div class="form-box-wrapper">
-      <div class="logo-wrapper">
-        <img src="../assets/logo.png" alt="繁盛王国" class="logo" width="100%" height="auto"/>
-      </div>
-      <div class="username-box">
-        <span class="tittle">用户名:</span>
-        <input type="email" class="input" v-model="loginForm.email" @keyup.enter="loginOperate">
-      </div>
-      <div class="password-box">
-        <span class="tittle">密 码:</span>
-        <input type="password" class="input" v-model="loginForm.password" @keyup.enter="loginOperate" />
-      </div>
-      <div class="buttons-wrapper">
-        <button class="login-btn" @click="loginOperate">登 录</button>
-        <button class="register-btn" @click="jump('register')">注 册</button>
+  <div>
+    <div class="login-wrapper">
+      <div class="form-box-wrapper">
+        <div class="logo-wrapper">
+          <img src="../assets/logo.png" alt="繁盛王国" class="logo" width="100%" height="auto"/>
+        </div>
+        <div class="username-box">
+          <span class="tittle">用户名:</span>
+          <input type="email" class="input" v-model="loginForm.email" @keyup.enter="loginOperate">
+        </div>
+        <div class="password-box">
+          <span class="tittle">密 码:</span>
+          <input type="password" class="input" v-model="loginForm.password" @keyup.enter="loginOperate" />
+        </div>
+        <div class="buttons-wrapper">
+          <button class="login-btn" @click="loginOperate">登 录</button>
+          <button class="register-btn" @click="jump('register')">注 册</button>
+        </div>
       </div>
     </div>
-
     <VFooter />
   </div>
 </template>
@@ -84,7 +85,7 @@
   .login-wrapper
     position: relative
     width: 100%
-    height: 100vh
+    min-height 87.88vh
     .form-box-wrapper
       margin: auto
       position: absolute

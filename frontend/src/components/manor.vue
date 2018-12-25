@@ -1,9 +1,13 @@
 <template>
-  <div class="manor-wrapper">
-    <div class="manor-header">
-      <div class="logo-wrapper">
-        <img class="logo" src="../assets/logo.png" alt="">
+  <div>
+    <div class="manor-wrapper">
+      <div class="manor-header">
+        <div class="logo-wrapper">
+          <img class="logo" src="../assets/logo.png" alt="">
+        </div>
+        <div class="manor-name" @click="jump('manor')">{{kingdom}}</div>
       </div>
+<<<<<<< Updated upstream
       <div class="manor-name" @click="jump('manor')">{{kingdom}}</div>
     </div>
     <div class="manor-main-wrapper">
@@ -16,9 +20,21 @@
         <button class="link" @click="jump('building')">建筑</button>
         <button class="link" @click="jump('#')">地图</button>
         <button class="link" @click="jump('#')">军事</button>
+=======
+      <div class="manor-main-wrapper">
+        <div class="info-wrapper">
+          <div class="row">王国：{{kingdom}}</div>
+          <div class="row">领主：{{nickname}}</div>
+          <div class="row">坐标：({{capitalX}}, {{capitalY}})</div>
+        </div>
+        <div class="links-wrapper">
+          <button class="link" @click="jump('building')">建筑</button>
+          <button class="link" @click="jump('plat')">地图</button>
+          <button class="link" @click="jump('#')">军事</button>
+        </div>
+>>>>>>> Stashed changes
       </div>
     </div>
-
     <VFooter />
   </div>
 </template>
@@ -104,6 +120,7 @@
 <style scoped lang="stylus">
   .manor-wrapper
     width: 100%
+    min-height 87.88vh
     .manor-header
       padding: 2rem 3rem
       text-align: left
