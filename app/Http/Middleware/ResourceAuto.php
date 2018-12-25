@@ -78,16 +78,31 @@ class ResourceAuto
         $interim = exploreTwo($time * $resource->woodOutput * $workRate);
         $resource->wood += $interim[0];
         $resource->woodChip += $interim[1];
+        if ($resource->woodChip > 1) {
+            $interim = exploreTwo($resource->woodChip);
+            $resource->wood += $interim[0];
+            $resource->woodChip += $interim[1];
+        }
 
         // 石头
         $interim = exploreTwo($time * $resource->stoneOutput * $workRate);
         $resource->stone += $interim[0];
         $resource->stoneChip += $interim[1];
+        if ($resource->stoneChip > 1) {
+            $interim = exploreTwo($resource->stoneChip);
+            $resource->stone += $interim[0];
+            $resource->stoneChip += $interim[1];
+        }
 
         // 人头税
         $interim = exploreTwo($time * $resource->people * 0.05);
         $resource->money += $interim[0];
         $resource->moneyChip += $interim[1];
+        if ($resource->moneyChip > 1) {
+            $interim = exploreTwo($resource->moneyChip);
+            $resource->money += $interim[0];
+            $resource->moneyChip += $interim[1];
+        }
 
         // 人口自增
         if ($workerNeed > $resource->people) {
