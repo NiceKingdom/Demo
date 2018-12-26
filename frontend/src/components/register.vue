@@ -20,35 +20,36 @@
             <!--<router-link tag="button" to="/">登&nbsp;&nbsp;录</router-link>-->
         <!--</form>-->
     <!--</div>-->
-  <div class="register-wrapper">
-    <div class="form-box-wrapper">
-      <div class="logo-wrapper">
-        <img src="../assets/logo.png" alt="繁盛王国" class="logo" width="100%" height="auto"/>
-      </div>
-      <div class="username-box">
-        <span class="tittle">邮 箱:</span>
-        <input type="email" class="input" v-model="signUpForm.email" @keyup.enter="registerOperate">
-      </div>
-      <div class="password-box">
-        <span class="tittle">密 码:</span>
-        <input type="password" class="input" v-model="signUpForm.password" @keyup.enter="registerOperate">
-      </div>
-      <div class="kingdom-box">
-        <span class="tittle">王 国:</span>
-        <input type="text" class="input" v-model="signUpForm.kingdom" @keyup.enter="registerOperate">
-      </div>
-      <div class="lord-box">
-        <span class="tittle">昵 称:</span>
-        <input type="text" class="input" v-model="signUpForm.nickname" @keyup.enter="registerOperate">
-      </div>
+  <div>
+    <div class="register-wrapper">
+      <div class="form-box-wrapper">
+        <div class="logo-wrapper">
+          <img src="../assets/logo.png" alt="繁盛王国" class="logo" width="100%" height="auto"/>
+        </div>
+        <div class="username-box">
+          <span class="tittle">邮 箱:</span>
+          <input type="email" class="input" v-model="signUpForm.email" @keyup.enter="registerOperate">
+        </div>
+        <div class="password-box">
+          <span class="tittle">密 码:</span>
+          <input type="password" class="input" v-model="signUpForm.password" @keyup.enter="registerOperate">
+        </div>
+        <div class="kingdom-box">
+          <span class="tittle">王 国:</span>
+          <input type="text" class="input" v-model="signUpForm.kingdom" @keyup.enter="registerOperate">
+        </div>
+        <div class="lord-box">
+          <span class="tittle">昵 称:</span>
+          <input type="text" class="input" v-model="signUpForm.nickname" @keyup.enter="registerOperate">
+        </div>
 
-      <div class="buttons-wrapper">
-        <button class="register-btn" @click="registerOperate">注 册</button>
-        <button class="login-btn" @click="jump('/')">登 录</button>
+        <div class="buttons-wrapper">
+          <button class="register-btn" @click="registerOperate">注 册</button>
+          <button class="login-btn" @click="jump('/')">登 录</button>
+        </div>
       </div>
+      <div class="footer-wrapper">footer and content</div>
     </div>
-    <div class="footer-wrapper">footer and content</div>
-
     <VFooter />
   </div>
 </template>
@@ -104,7 +105,7 @@
   .register-wrapper
     position: relative
     width: 100%
-    min-height: 100vh
+    min-height: 87.88vh
     .form-box-wrapper
       margin: auto
       position: absolute

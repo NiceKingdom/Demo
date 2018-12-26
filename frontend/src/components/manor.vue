@@ -1,24 +1,57 @@
 <template>
-  <div class="manor-wrapper">
-    <div class="manor-header">
-      <div class="logo-wrapper">
-        <img class="logo" src="../assets/logo.png" alt="">
+  <div>
+      <div class="building-wrapper">
+      <div class="building-header">
+        <div class="logo-wrapper">
+          <img class="logo" src="../assets/logo.png" alt="">
+        </div>
+        <div class="resource-wrapper">
+          <VResourceBar />
+        </div>
+        <div class="building-name" @click="jump('manor')">{{kingdom}}</div>
       </div>
-      <div class="manor-name" @click="jump('manor')">{{kingdom}}</div>
-    </div>
-    <div class="manor-main-wrapper">
-      <div class="info-wrapper">
-        <div class="row">王国：{{kingdom}}</div>
-        <div class="row">领主：{{nickname}}</div>
-        <div class="row">坐标：({{capitalX}}, {{capitalY}})</div>
-      </div>
-      <div class="links-wrapper">
-        <button class="link" @click="jump('building')">建筑</button>
-        <button class="link" @click="jump('plat')">地图</button>
-        <button class="link" @click="jump('#')">军事</button>
-      </div>
-    </div>
+      <div class="building-main-wrapper">
+        <div class="info-wrapper">
+          <div class="left">
+            <VProgress v-for="item in schedules" :process="item" :key="item.id" />
+          </div>
+          <div class="right">
+            <div class="building">
+              <p>
+                <span>建筑清单：</span>
+                <span style="padding: 2px; margin: 2px; color: #636363; border: 1px solid black;"
+                      v-for="type in buildType"
+                      @click="toggle(type)"
+                      :key="type">{{typeTrans(type)}}</span>
+              </p>
+              <label for="number">数量</label>
+              <input type="number" id="number" v-model="actionNumber" class="btn-number">
 
+              <table>
+                <tr>
+                  <th width="120">名称</th>
+                  <th>拥有</th>
+                  <th>时间</th>
+                  <th>等级</th>
+                  <th>占用</th>
+                  <th>成本</th>
+                  <th>产出</th>
+                  <th>操作</th>
+                </tr>
+                <VBuildingList v-for="item in buildingList[activeType]" :key="item.name"
+                               :building="item" @build="build" @destroy="destroy" />
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="links-wrapper">
+          <button class="link" @click="jump('building')">建筑</button>
+          <button class="link" @click="jump('plat')">地图</button>
+          <button class="link" @click="jump('#')">军事</button>
+          <button class="link" @click="click()">测试</button>
+        </div>
+      </div>
+    </div>
     <VFooter />
   </div>
 </template>
@@ -104,6 +137,7 @@
 <style scoped lang="stylus">
   .manor-wrapper
     width: 100%
+    min-height: 87.88vh
     .manor-header
       padding: 2rem 3rem
       text-align: left
