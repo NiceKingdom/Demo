@@ -48,7 +48,6 @@
           <button class="login-btn" @click="jump('/')">登 录</button>
         </div>
       </div>
-      <div class="footer-wrapper">footer and content</div>
     </div>
     <VFooter />
   </div>
@@ -111,7 +110,7 @@
       position: absolute
       left: 0
       right: 0
-      top: -120px
+      top: 0
       bottom: 0
       width: 500px
       height: 480px
