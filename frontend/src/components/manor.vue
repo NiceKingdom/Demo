@@ -7,20 +7,6 @@
         </div>
         <div class="manor-name" @click="jump('manor')">{{kingdom}}</div>
       </div>
-<<<<<<< Updated upstream
-      <div class="manor-name" @click="jump('manor')">{{kingdom}}</div>
-    </div>
-    <div class="manor-main-wrapper">
-      <div class="info-wrapper">
-        <div class="row">王国：{{kingdom}}</div>
-        <div class="row">领主：{{nickname}}</div>
-        <div class="row">坐标：({{capitalX}}, {{capitalY}})</div>
-      </div>
-      <div class="links-wrapper">
-        <button class="link" @click="jump('building')">建筑</button>
-        <button class="link" @click="jump('#')">地图</button>
-        <button class="link" @click="jump('#')">军事</button>
-=======
       <div class="manor-main-wrapper">
         <div class="info-wrapper">
           <div class="row">王国：{{kingdom}}</div>
@@ -32,7 +18,6 @@
           <button class="link" @click="jump('plat')">地图</button>
           <button class="link" @click="jump('#')">军事</button>
         </div>
->>>>>>> Stashed changes
       </div>
     </div>
     <VFooter />
