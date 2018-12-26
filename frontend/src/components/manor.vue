@@ -105,7 +105,7 @@
 <style scoped lang="stylus">
   .manor-wrapper
     width: 100%
-    min-height 87.88vh
+    min-height: 87.88vh
     .manor-header
       padding: 2rem 3rem
       text-align: left

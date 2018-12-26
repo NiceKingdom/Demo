@@ -340,7 +340,7 @@
 
 <style scoped lang="stylus">
   .building-wrapper
-    min-height 87.88vh
+    min-height: 87.88vh
     width: 100%
     .building-header
       padding: 2rem 3rem

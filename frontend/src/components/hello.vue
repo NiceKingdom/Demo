@@ -85,7 +85,7 @@
   .login-wrapper
     position: relative
     width: 100%
-    min-height 87.88vh
+    min-height: 87.88vh
     .form-box-wrapper
       margin: auto
       position: absolute
