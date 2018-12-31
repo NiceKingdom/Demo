@@ -96,7 +96,13 @@
           })
         })
       },
-    }
+    },
+    created: function () {
+      // 确定时间差值，并检查用户登录状态
+      if (this.checkLogin()) {
+        window.location = '/#/manor'
+      }
+    },
   }
 </script>
 
