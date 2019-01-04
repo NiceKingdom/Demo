@@ -38,6 +38,7 @@ class ResourceAuto
 
     /**
      * 资源计算并自增
+     * 当前的数值 = 更新前的数值 * 增长率 ^ 时间间隔
      *
      * @return bool
      * @throws \Exception
@@ -89,12 +90,28 @@ class ResourceAuto
         $resource->money += $interim[0];
         $resource->moneyChip = $interim[1];
 
+        // 粮食
+        $interim = exploreTwo($time * $resource->foodOutput * $workRate + $resource->foodChip);
+        $resource->food += $interim[0];
+        $resource->foodChip = $interim[1];
+
         // 人口自增
         if ($workerNeed > $resource->people) {
-            $peopleAdd = $time * 0.012;
-            $interim = exploreTwo($peopleAdd + $resource->woodChip);
+            // 0.12% 为临时的每秒人口增长率
+            $peopleAdd = $resource->people * pow(0.0006, $time);
+            $interim = exploreTwo($peopleAdd + $resource->peopleChip);
             $resource->people += $interim[0];
             $resource->peopleChip = $interim[1];
+
+            // 计算粮食消耗
+            $needFood = $resource->people * $resource->food * 0.1;
+            if ($needFood > $resource->food) {
+                $interim = exploreTwo($needFood);
+                $resource->food += $interim[0];
+                $resource->foodChip = $interim[1];
+            } else {
+                $resource->people = $resource->foodOutput / 0.1 * 0.8;
+            }
         }
 
         $resource->save();

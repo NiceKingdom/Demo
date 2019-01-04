@@ -17,7 +17,7 @@ class CreateResourcesTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('userId');
 
-            $table->unsignedInteger('people')->default(200); # 人口 - 成人
+            $table->unsignedInteger('people')->default(100); # 人口 - 成人
             $table->float('peopleChip', 5, 4)->default(0); # 散碎
             $table->mediumInteger('peopleOutput')->default(0); # 实际产出
 
