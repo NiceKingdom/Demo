@@ -104,13 +104,17 @@ class ResourceAuto
             $resource->peopleChip = $interim[1];
 
             // 计算粮食消耗
-            $needFood = $resource->people * $resource->food * 0.1;
+            $needFood = $resource->people * $time * 0.1;
             if ($needFood > $resource->food) {
                 $interim = exploreTwo($needFood);
-                $resource->food += $interim[0];
-                $resource->foodChip = $interim[1];
+                if ($interim[1] > $resource->foodChip) {
+                    $interim[0] += 1;
+                    $interim[1] = 1 - $interim[1] + $resource->foodChip;
+                }
+                $resource->food -= $interim[0];
+                $resource->foodChip -= ($interim[1] > $resource->foodChip) ? 0 : $interim[1];
             } else {
-                $resource->people = $resource->foodOutput / 0.1 * 0.8;
+                $resource->people = floor($resource->foodOutput / 0.1 * 0.99);
             }
         }
 
