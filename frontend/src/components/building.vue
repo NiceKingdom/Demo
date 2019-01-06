@@ -48,7 +48,6 @@
             <button class="link" @click="jump('building')">建筑</button>
             <button class="link" @click="jump('plat')">地图</button>
             <button class="link" @click="jump('#')">军事</button>
-            <button class="link" @click="click()">测试</button>
           </div>
         </div>
       </div>

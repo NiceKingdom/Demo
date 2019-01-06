@@ -38,7 +38,6 @@
       setInterval(update, 1000)
       function update () {
         let nowTime = self.nowTime()
-        console.info(nowTime)
         if (self.process.action) {
           if (self.process.endTime > nowTime) {
             let allTime = self.process.endTime - self.process.startTime // 整个进程的时间

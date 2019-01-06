@@ -38,7 +38,7 @@
   }
 </script>
 
-<style>
+<style scoped>
   .progress{
     width: 70%;
     height: 7px;
@@ -64,12 +64,10 @@
     animation: loader 1s linear;
   }
 </style>
+
 <style scoped lang="scss">
-  @import "../assets/scss/mycss_lib";
+  @import "../assets/scss/global_css";
   .test {
     color: #1fa492;
-  }
-  .all-father {
-    @include father-child-test;
   }
 </style>

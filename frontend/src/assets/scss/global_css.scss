@@ -1,0 +1,65 @@
+// 主题色（暂设为粉色，后期根据需要更改。）（为什么设粉色？因为我愿意啊~）
+  $main-background-color: pink;
+
+// 栅格（24格制）每格预设宽度
+  $width-cell: (100/24) * 1%;
+// 栅格（24格制）父元素预设display值
+  $default-display: flex block !default;
+
+// 默认按钮（全局）预设display值
+  $button-display: inline-block !default;
+
+// 默认按钮（全局）预设background（背景色）值
+  $button-background-color: #0D293E !default;
+
+// 【栅格】
+// 用法:
+// 1.给父元素一个class，如plat页面class='all-father'元素。
+// 2.子元素宽度为多少单元格，{$i}为多少
+// 3.如果需要inline-block,则需要在写<style>样式时更改display（默认为$default-display）为flex。
+  .father-child-test {
+    display: $default-display;
+    @for $i from 1 through 24 {
+      .item-#{$i} {
+        width: $width-cell * $i;
+        background: $main-background-color;
+        outline: 1px solid white;
+      }
+    }
+  }
+
+// 【按钮】统一全局按钮样式
+// 用法:
+// 1.引入scss文件后，button标签默认变为以下样式。（无需再单独添加class）
+// 2.按钮的display样式默认为inline-block，如需修改为其他值，可以直接在组件的CSS样式中设置。
+// 3.按钮背景颜色（background）默认为 $button-background-color（见上） ，字体颜色（color）默认为白色。
+// 4.如需要改变按钮颜色，则需要给按钮一个class='颜色名-button'，目前有十一种颜色可用，具体见下方代码。
+  button {
+    // 为button标签设置通用样式
+      display: $button-display;
+      width: 4em;
+      height: 2em;
+      line-height: 2em;
+      font-size: 1rem;
+      font-family: '微软雅黑', Helvetica, Arial, sans-serif;
+      text-align: center;
+      border: none;
+      border-radius: 0.4rem;
+      box-shadow: 0 4px #c3c3c3;
+      color: white;
+      outline: none;
+      background: $button-background-color;
+      // 按钮的按压样式
+      &:active {
+        box-shadow: 0 2px #909090;
+        transform: translateY(2px);
+      }
+  }
+// 为不同标签设置不同颜色，class = 颜色名-button ，eg： class = 'yellow-button'
+  @each $color in red, orange, yellow, green,
+  skyblue, blue, purple, pink,
+  black, white, gray {
+    .#{$color}-button {
+      background: $color;
+    }
+  }
