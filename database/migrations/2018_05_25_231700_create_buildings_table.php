@@ -16,7 +16,7 @@ class CreateBuildingsTable extends Migration
         Schema::create('buildings', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('userId');
-            $table->unsignedMediumInteger('farm01')->default(0); # 农田
+            $table->unsignedMediumInteger('farm01')->default(2); # 农田
             $table->unsignedMediumInteger('farm02')->default(0);
             $table->unsignedMediumInteger('sawmill01')->default(0); # 伐木场
             $table->unsignedMediumInteger('sawmill02')->default(0);

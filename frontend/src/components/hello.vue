@@ -65,17 +65,9 @@
       },
     },
     created: function () {
-      this.axios.get('index').then((response) => {
-        if (response.data.isLogin && localStorage.getItem('user')) {
-          localStorage.setItem('heartBeat', Math.ceil(new Date() / 1000).toString())
-          window.location = '/#/manor'
-        }
-      }).catch((error) => {
-        this.$swal({
-          text: (error.response && error.response.data) ? error.response : '服务器出错',
-          type: 'error',
-        })
-      })
+      if (this.checkLogin()) {
+        window.location = '/#/manor'
+      }
     },
   }
 </script>

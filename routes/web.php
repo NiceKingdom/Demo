@@ -25,6 +25,7 @@ Route::get ('/logout', 'Common\UserController@logout');
 Route::get ('/user/get-resource', 'Common\ResourceController@getMeResource')->middleware('resource.auto');
 
 // 建筑
+Route::get ('/building/index', 'Building\BuildingController@index')->middleware('resource.auto');
 Route::get ('/building/list', 'Building\BuildingController@buildingList');
 Route::get ('/building/schedule', 'Building\BuildingController@schedule')->middleware('resource.auto');
 

@@ -61,6 +61,7 @@ class InitializeController extends Controller
      */
     protected function getBuildingList($key = null)
     {
+        // 默认注册后有一块农田
         $list = [
             'farm' => [
                 [

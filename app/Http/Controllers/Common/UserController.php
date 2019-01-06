@@ -34,13 +34,14 @@ class UserController extends Controller
      * @description 获取用户的登录状态
      * @method get
      * @url https://{url}/index
-     * @return {"isLogin":false}
+     * @return {"isLogin":false,"time":1546190299}
      * @return_param isLogin bool 是否已登录
+     * @return_param time int 服务器时间（一般源于北京授时中心）
      * @number 20
      */
     public function getStatus()
     {
-        return ['isLogin' => Auth::check()];
+        return ['isLogin' => Auth::check(), 'time' => time()];
     }
 
     /**

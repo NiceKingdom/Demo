@@ -20,7 +20,9 @@ class Cors
         $allow_origin = [
             'http://localhost:8080',
             'http://localhost:8081',
+            'http://www.nice-kingdom.com',
             'http://nice-kingdom.com',
+            'http://www.nice-kingdom.uio',
             'http://nice-kingdom.uio',
         ];
         if (in_array($origin, $allow_origin)) {

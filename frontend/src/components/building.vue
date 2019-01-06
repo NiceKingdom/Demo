@@ -104,7 +104,6 @@
 
           // 请求当前领地的资源
           this.axios.get('user/get-resource').then((response) => {
-            console.info(response)
             localStorage.setItem('resource', JSON.stringify(response.data))
             this.$store.commit('setResource', response.data)
           }).catch((error) => {
@@ -196,59 +195,35 @@
       },
     },
     created: function () {
-      // 确认登录状态（检查心跳包）
-      let isLogin = localStorage.getItem('isLogin')
-      if (!isLogin || isLogin === 'false') {
+      // 检查用户登录状态
+      if (!this.checkLogin()) {
         window.location = '/#/'
-      }
-
-      let heartBeat = localStorage.getItem('heartBeat')
-      if (!heartBeat || heartBeat < Math.ceil(new Date() / 1000) - 600) {
-        this.axios.get('index').then((response) => {
-          if (!response.data.isLogin) {
-            this.axios.get('logout')
-            localStorage.setItem('isLogin', 'false')
-            window.location = '/#/'
-          }
-        }).catch((error) => {
-          console.info(error.response)
-          this.$swal({
-            text: (error.response && error.response.data) ? error.response : '检查登录状态失败',
-            type: 'error',
-          })
-        })
-        localStorage.setItem('heartBeat', Math.ceil(new Date() / 1000).toString())
       }
 
       // 赋值用户数据
       let user = JSON.parse(localStorage.getItem('user'))
       this.$store.commit('setUser', user)
 
-      // 获取建筑清单并赋值
-      this.axios.get('building/list').then((response) => {
+      // 获取用户数据并赋值
+      this.axios.get('building/index').then((response) => {
         localStorage.setItem('building', JSON.stringify(response.data.building))
         localStorage.setItem('buildingList', JSON.stringify(response.data.list))
-        this.$store.commit('setBuildingList', response.data)
+        this.$store.commit('setBuildingList', {
+          'building': response.data.building,
+          'list': response.data.list,
+        })
+        this.$store.commit('setResource', response.data.resource)
+        this.$store.commit('setSchedules', response.data.schedule)
       }).catch((error) => {
+        if (error.response.data.message === 'Unauthenticated.') {
+          localStorage.clear()
+          window.location.reload()
+        }
         this.$swal({
           text: (error.response.data) ? error.response.data : '服务器出错',
           type: 'error',
         })
       })
-
-      // 获取已建筑列表
-      this.axios.get('building/schedule').then((response) => {
-        console.info(response.data)
-        this.$store.commit('setSchedules', response.data)
-      }).catch((error) => {
-        this.$swal({
-          text: (error.response.data) ? error.response.data : '服务器出错',
-          type: 'error',
-        })
-      })
-
-      // 赋值领地资源
-      this.$store.commit('setResource', JSON.parse(localStorage.getItem('resource')))
     },
   }
 </script>

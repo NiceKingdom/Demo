@@ -17,13 +17,13 @@ class CreateResourcesTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('userId');
 
-            $table->unsignedInteger('people')->default(200); # 人口 - 成人
+            $table->unsignedInteger('people')->default(100); # 人口 - 成人
             $table->float('peopleChip', 5, 4)->default(0); # 散碎
             $table->mediumInteger('peopleOutput')->default(0); # 实际产出
 
             $table->unsignedInteger('food')->default(3000); # 食物(Max: 40 亿)
             $table->float('foodChip', 5, 4)->default(0); # 散碎
-            $table->mediumInteger('foodOutput')->default(0); # 实际产出
+            $table->mediumInteger('foodOutput')->default(80); # 实际产出
 
             $table->unsignedInteger('wood')->default(2000); # 木材
             $table->float('woodChip', 5, 4)->default(0); # 散碎
