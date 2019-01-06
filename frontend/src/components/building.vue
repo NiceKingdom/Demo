@@ -104,7 +104,6 @@
 
           // 请求当前领地的资源
           this.axios.get('user/get-resource').then((response) => {
-            console.info(response)
             localStorage.setItem('resource', JSON.stringify(response.data))
             this.$store.commit('setResource', response.data)
           }).catch((error) => {
@@ -205,31 +204,26 @@
       let user = JSON.parse(localStorage.getItem('user'))
       this.$store.commit('setUser', user)
 
-      // 获取建筑清单并赋值
-      this.axios.get('building/list').then((response) => {
+      // 获取用户数据并赋值
+      this.axios.get('building/index').then((response) => {
         localStorage.setItem('building', JSON.stringify(response.data.building))
         localStorage.setItem('buildingList', JSON.stringify(response.data.list))
-        this.$store.commit('setBuildingList', response.data)
+        this.$store.commit('setBuildingList', {
+          'building': response.data.building,
+          'list': response.data.list,
+        })
+        this.$store.commit('setResource', response.data.resource)
+        this.$store.commit('setSchedules', response.data.schedule)
       }).catch((error) => {
+        if (error.response.data.message === 'Unauthenticated.') {
+          localStorage.clear()
+          window.location.reload()
+        }
         this.$swal({
           text: (error.response.data) ? error.response.data : '服务器出错',
           type: 'error',
         })
       })
-
-      // 获取已建筑列表
-      this.axios.get('building/schedule').then((response) => {
-        console.info(response.data)
-        this.$store.commit('setSchedules', response.data)
-      }).catch((error) => {
-        this.$swal({
-          text: (error.response.data) ? error.response.data : '服务器出错',
-          type: 'error',
-        })
-      })
-
-      // 赋值领地资源
-      this.$store.commit('setResource', JSON.parse(localStorage.getItem('resource')))
     },
   }
 </script>

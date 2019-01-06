@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Building;
 use App\Http\Requests\BuildingPost;
 use App\Models\Building;
 use App\Models\BuildingList;
+use App\Models\Resource;
 use App\Service\BuildingService;
 use App\Service\LogService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
-use Symfony\Component\HttpFoundation\Response;
 
 class BuildingController extends Controller
 {
@@ -28,6 +28,20 @@ class BuildingController extends Controller
             $this->buildingService->init();
             return $next($request);
         });
+    }
+
+    public function index()
+    {
+        $info = [];
+
+        if (Auth::check()) {
+            $info['building'] = Building::find(Auth::id());
+            $info['resource'] = Resource::where('userId', Auth::id())->first();
+        }
+        $info['list'] = json_decode(Redis::get('buildingList'), true);
+        $info['schedule'] = $this->schedule();
+
+        return $info;
     }
 
     /**

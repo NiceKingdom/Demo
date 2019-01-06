@@ -81,8 +81,7 @@
         }
 
         this.axios.post('register', this.signUpForm).then((response) => {
-          console.info(response.data)
-          this.$store.commit('setUser', response.user)
+          this.$store.commit('setUser', response.data.user)
           localStorage.setItem('user', JSON.stringify(response.data.user))
           localStorage.setItem('resource', JSON.stringify(response.data.resource))
           localStorage.setItem('building', JSON.stringify(response.data.building))

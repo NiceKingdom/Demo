@@ -50,7 +50,7 @@ class ResourceAuto
         $time = $_SERVER['REQUEST_TIME'];
 
         // 定义系统数据
-        $time -= strtotime($resource->updated_at);
+        $time = ($time - strtotime($resource->updated_at)) / 3600;
         // 计算所有建筑需求工人
         $buildList = json_decode(Redis::get('buildingList'), true);
         $building = Building::where('userId', Auth::id())->first();
@@ -96,26 +96,26 @@ class ResourceAuto
         $resource->foodChip = $interim[1];
 
         // 人口自增
-        if ($workerNeed > $resource->people) {
+        if ($workerNeed * 2 > $resource->people) {
             // 0.12% 为临时的每秒人口增长率
             $peopleAdd = $resource->people * pow(0.0006, $time);
             $interim = exploreTwo($peopleAdd + $resource->peopleChip);
             $resource->people += $interim[0];
             $resource->peopleChip = $interim[1];
+        }
 
-            // 计算粮食消耗
-            $needFood = $resource->people * $time * 0.1;
-            if ($needFood > $resource->food) {
-                $interim = exploreTwo($needFood);
-                if ($interim[1] > $resource->foodChip) {
-                    $interim[0] += 1;
-                    $interim[1] = 1 - $interim[1] + $resource->foodChip;
-                }
-                $resource->food -= $interim[0];
-                $resource->foodChip -= ($interim[1] > $resource->foodChip) ? 0 : $interim[1];
-            } else {
-                $resource->people = floor($resource->foodOutput / 0.1 * 0.99);
+        // 计算粮食消耗
+        $needFood = $resource->people * $time * 0.1;
+        if ($needFood > $resource->food) {
+            $interim = exploreTwo($needFood);
+            if ($interim[1] > $resource->foodChip) {
+                $interim[0] += 1;
+                $interim[1] = 1 - $interim[1] + $resource->foodChip;
             }
+            $resource->food -= $interim[0];
+            $resource->foodChip -= ($interim[1] > $resource->foodChip) ? 0 : $interim[1];
+        } else {
+            $resource->people = floor($resource->foodOutput / 0.1 * 0.99);
         }
 
         $resource->save();

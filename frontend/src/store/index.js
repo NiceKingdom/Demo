@@ -95,8 +95,10 @@ export default new VueX.Store({
       let keys = ['farm', 'sawmill']
       for (let i = 0; i < buildingKeys.length; i++) {
         for (let ii = 0; ii < keys.length; ii++) {
+          // 检查本条内容是具体建筑
           if (buildingKeys[i].indexOf(keys[ii]) !== -1) {
             let keyNumber = Number(buildingKeys[i].slice(-2)) - 1
+            // 将具体内容赋值给建筑清单
             buildingList.list[keys[ii]][keyNumber].number = buildingList.building[buildingKeys[i]]
           }
         }
