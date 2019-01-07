@@ -15,9 +15,9 @@
 // 【栅格】
 // 用法:
 // 1.给父元素一个class，如plat页面class='all-father'元素。
-// 2.子元素宽度为多少单元格，{$i}为多少
-// 3.如果需要inline-block,则需要在写<style>样式时更改display（默认为$default-display）为flex。
-  .father-child-test {
+// 2.子元素宽度为多少单元格，{$i}为多少，class名格式为：'item-数字'
+// 3.如果需要inline-block,则需要在写<style>样式时更改display（默认为$default-display）为inline-flex。
+  .all-father {
     display: $default-display;
     @for $i from 1 through 24 {
       .item-#{$i} {
@@ -34,11 +34,11 @@
 // 2.按钮的display样式默认为inline-block，如需修改为其他值，可以直接在组件的CSS样式中设置。
 // 3.按钮背景颜色（background）默认为 $button-background-color（见上） ，字体颜色（color）默认为白色。
 // 4.如需要改变按钮颜色，则需要给按钮一个class='颜色名-button'，目前有十一种颜色可用，具体见下方代码。
-  button {
+  button , .button {
     // 为button标签设置通用样式
       display: $button-display;
       width: 4em;
-      height: 2em;
+      height: 2.4em;
       line-height: 2em;
       font-size: 1rem;
       font-family: '微软雅黑', Helvetica, Arial, sans-serif;

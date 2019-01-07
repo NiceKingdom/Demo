@@ -1,7 +1,9 @@
 <template>
   <div>
     <img class="logo" src="../assets/logo.png" alt="">
-    <br/>
+    <br>
+    <p class="PS">(～￣▽￣)～ 该页面功能暂未开放，尽请期待！</p>
+    <br>
     <div class="test">- - - - Example - - - -</div>
     <div class="all-father">
       <div class="item-2">2-cell</div>
@@ -10,9 +12,8 @@
       <div class="item-24">24-cell</div>
    </div>
 
-    <hr>
-
-    <button @click="test">点我改变长度</button>
+    <br>
+    <button class="orange-button" @click="test">点我改变长度</button>
     <div class="progress">
       <div class="loader-container" v-bind:style="styleObject"></div>
     </div>
@@ -32,19 +33,27 @@
     },
     methods: {
       test: function () {
-        this.styleObject.width = '12%'
+        this.styleObject.width = this.styleObject.width === '89%' ? '12%' : '89%'
       },
     }
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+  @import "../assets/scss/global_css";
+  .test {
+    color: #1fa492;
+  }
+  .PS {
+    color: #1fa492;
+    font-weight: bold;
+  }
   .progress{
     width: 70%;
     height: 7px;
     border-radius:7px;
     margin-left: 15%;
-    margin-top: 30%;
+    margin-top: 20%;
     background: -webkit-linear-gradient(left,#e4e3e4,#e4e5e4);
     background: -moz-linear-gradient(left,#e4e3e4,#e4e5e4);
     background: -o-linear-gradient(left,#e4e3e4,#e4e5e4);
@@ -62,12 +71,5 @@
     border-radius:7px;
     box-shadow: inset 0 -2px 2px rgba(0, 0, 0, 0.2);
     animation: loader 1s linear;
-  }
-</style>
-
-<style scoped lang="scss">
-  @import "../assets/scss/global_css";
-  .test {
-    color: #1fa492;
   }
 </style>
