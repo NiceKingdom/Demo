@@ -98,7 +98,7 @@ class InitializeController extends Controller
                     'level' => 1,
                     'time' => 120,
                     'product' => [
-                        'wood' => 0.6,
+                        'wood' => 5,
                     ],
                     'material' => [
                         'money' => 10,
@@ -111,13 +111,13 @@ class InitializeController extends Controller
                     'level' => 2,
                     'time' => 165, // upper ≈40%
                     'product' => [
-                        'wood' => 1.6, // upper 25%
+                        'wood' => 6, // upper 25%
                     ],
                     'material' => [
-                        'money' => 28, // upper 40%
+                        'money' => 22, // upper 40%
                     ],
                     'occupy' => [
-                        'people' => 2,
+                        'people' => 1,
                     ],
                 ],
             ],

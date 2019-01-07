@@ -86,7 +86,7 @@ class ResourceAuto
         $resource->stoneChip = $interim[1];
 
         // 人头税
-        $interim = exploreTwo($time * $resource->people * 0.05 + $resource->moneyChip);
+        $interim = exploreTwo($time * $resource->people * 20 + $resource->moneyChip);
         $resource->money += $interim[0];
         $resource->moneyChip = $interim[1];
 
@@ -105,7 +105,7 @@ class ResourceAuto
         }
 
         // 计算粮食消耗
-        $needFood = $resource->people * $time * 0.1;
+        $needFood = $resource->people * $time * 24;
         if ($needFood > $resource->food) {
             $interim = exploreTwo($needFood);
             if ($interim[1] > $resource->foodChip) {

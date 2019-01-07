@@ -89,3 +89,7 @@
     color: #a8a9a6;
   }
 </style>
+
+<style scoped lang="scss">
+  @import "../../assets/scss/mycss_lib";
+</style>
