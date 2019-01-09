@@ -83,7 +83,8 @@ class ResourceController extends Controller
 
             // 启动政策
             $endTime = Policy::POLICIES_ENLISTING['time'] + $_SERVER['REQUEST_TIME'];
-            $result = (new Policy())->addWithMe(Policy::POLICIES_ENLISTING['id'], $endTime);
+            $coordinate = explode(',', Auth::user()->capital);
+            $result = (new Policy())->addWithMe($coordinate[0], $coordinate[1], Policy::POLICIES_ENLISTING['id'], $endTime);
 
             if (is_bool($result)) {
                 DB::commit();
@@ -113,13 +114,24 @@ class ResourceController extends Controller
     public function knowEnlisting()
     {
         // 启动政策
-        $result = (new Policy())->addWithMe(Policy::POLICIES_ENLISTING['id'], $endTime);
+        $coordinate = explode(',', Auth::user()->capital);
+        $percent = rand(1, 100);
+        // 10% 1-2; 60% 3-6; 30% 7-10; sum: 21.3
+        if ($percent < 10) {
+            $endResult = rand(1, 2);
+        } elseif ($percent < 70) {
+            $endResult = rand(3, 6);
+        } else {
+            $endResult = rand(7, 10);
+        }
+        $endInfo = '政策“' . Policy::POLICIES_TRANS[0] . '”已结束，我们募集到' . $endResult . '个流浪人。';
+        $result = (new Policy())->getStatus($coordinate[0], $coordinate[1], Auth::id(), $endInfo);
 
-        if (is_bool($result)) {
+        if ($result['status'] === 200) {
             return $result;
         }
 
-        return response($result, 500);
+        return response($result, $result['status']);
     }
 
     /**

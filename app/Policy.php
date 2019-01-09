@@ -21,27 +21,45 @@ class Policy extends Model
         'time' => 100,
     ];
 
-    public function findStatus(string $coordinate, int $userId = 0)
+    public function getStatus(int $x, int $y, int $userId = 0, string $endInfo)
     {
         if (!$userId) {
             $userId = Auth::id();
         }
 
-        // TODO: 检查政令是否执行完毕，完毕则加入日志、未完则返回完成时间
-        $policy = self::find($userId);
+        $policy = self::where(['x' => $x, 'y' => $y]);
+        // FIXME：Map 完成后，改为校验“土地所有者”
+        if ($policy->userId !== $userId) {
+            return ['status' => 403, 'info' => '这是块陌生的土壤，我们没有施政权力。'];
+        } else if ($policy->endTime > $_SERVER['REQUEST_TIME']) {
+            return ['status' => 200, 'info' => $policy->endTime];
+        } else {
+            // 行政
+            $userHistory = new UserHistory();
+            $userHistory->userId = $userId;
+            $userHistory->status = UserHistory::STATUS['stop'];
+            $userHistory->info = $endInfo;
+
+            if (!$userHistory->save()) {
+                return ['status' => 500, 'info' => '政策日志保存失败'];
+            }
+            return ['status' => 200, 'info' => $endInfo];
+        }
     }
 
     /**
      * 为用户自己启用政策
      *
+     * @param int $x X 坐标
+     * @param int $y Y 坐标
      * @param int $key 政策 ID
      * @param int $endTime 结束时间
      * @param string $tips 备注
      * @return bool|string
      */
-    public function addWithMe(int $key, int $endTime = 0, string $tips = '')
+    public function addWithMe(int $x, int $y, int $key, int $endTime = 0, string $tips = '')
     {
-        return $this->add($key, Auth::id(), Auth::user()->capital, $endTime, $tips);
+        return $this->add($key, Auth::id(), $x, $y, $endTime, $tips);
     }
 
     /**
@@ -83,17 +101,19 @@ class Policy extends Model
      *
      * @param int $key 政策 ID
      * @param int $userId 用户 ID
-     * @param string $capital 坐标
+     * @param int $x X 坐标
+     * @param int $y Y 坐标
      * @param int $endTime 结束时间
      * @param string $tips 备注
      * @return bool|string
      */
-    protected function add(int $key, int $userId, string $capital, int $endTime = 0, string $tips = '')
+    protected function add(int $key, int $userId, int $x, int $y, int $endTime = 0, string $tips = '')
     {
         DB::beginTransaction();
         try {
             $model = new self();
-            $model->capital = $capital;
+            $model->x = $x;
+            $model->y = $y;
             $model->userId = $userId;
             $model->policiesKey = $key;
             $model->title = self::POLICIES_TRANS[$key];

@@ -16,7 +16,8 @@ class CreatePoliciesTable extends Migration
         Schema::create('policies', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('userId'); # 用户 ID，仅作为锚定，地点被占领后，不影响政策实行
-            $table->string('capital', 12); # 坐标
+            $table->unsignedInteger('x'); # X 坐标
+            $table->unsignedInteger('y'); # Y 坐标
             $table->unsignedMediumInteger('policiesKey'); # 政策编号
             $table->string('title', 30); # 标题
             $table->unsignedInteger('endTime'); # 结束时间
