@@ -21,6 +21,16 @@ class Policy extends Model
         'time' => 100,
     ];
 
+    public function findStatus(string $coordinate, int $userId = 0)
+    {
+        if (!$userId) {
+            $userId = Auth::id();
+        }
+
+        // TODO: 检查政令是否执行完毕，完毕则加入日志、未完则返回完成时间
+        $policy = self::find($userId);
+    }
+
     /**
      * 为用户自己启用政策
      *

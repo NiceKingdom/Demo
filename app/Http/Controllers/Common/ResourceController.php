@@ -8,6 +8,7 @@ use App\Policy;
 use App\Service\LogService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class ResourceController extends Controller
 {
@@ -57,15 +58,18 @@ class ResourceController extends Controller
      * showdoc
      * @catalog 前后端接口/领地
      * @title [动作]发布流民招募启示
-     * @description 该政令耗费 10 金钱，返回政令的结束时间戳，届时，需前端发起请求，获取该政令的状态并提示给用户
+     * @description 在坐标为 X,Y 的领土上，施展政令。该政令耗费 10 金钱，返回政令的结束时间戳，届时，需前端发起请求，获取该政令的状态并提示给用户
      * @method get
      * @url https://{url}/lord/policy/enlisting/open
+     * @param x 必选 int X 坐标
+     * @param y 必选 int Y 坐标
      * @return {1546777084}
      * @return_param - int|string 政令完成的时间戳或失败原因
      * @number 50
      */
     public function openEnlisting()
     {
+        // 扣除资源
         $resource = Resource::where('userId', Auth::id())->first();
         if ($resource->money < 10) {
             return response('大爷，咱们的钱不够啦！', 400);
@@ -76,25 +80,19 @@ class ResourceController extends Controller
             if (!$resource->save()) {
                 return '失败：付钱行为无法保存';
             }
+
+            // 启动政策
+            $endTime = Policy::POLICIES_ENLISTING['time'] + $_SERVER['REQUEST_TIME'];
+            $result = (new Policy())->addWithMe(Policy::POLICIES_ENLISTING['id'], $endTime);
+
+            if (is_bool($result)) {
+                DB::commit();
+                return $endTime;
+            }
         } catch (\Exception $exception) {
             DB::rollBack();
-            return $exception->getMessage();
+            return response($exception->getMessage(), 500);
         }
-
-        return '失败：移除政策';
-
-        // 启动政策
-        $endTime = Policy::POLICIES_ENLISTING['time'];
-        $result = (new Policy())->addWithMe(Policy::POLICIES_ENLISTING['id'], $endTime);
-
-        if (is_bool($result)) {
-            return $_SERVER['REQUEST_TIME'] + Policy::POLICIES_ENLISTING['time'];
-        }
-
-        $resource->money += 10;
-        $resource->save();
-
-        return response($result, 500);
     }
 
     /**
@@ -104,6 +102,8 @@ class ResourceController extends Controller
      * @description -
      * @method get
      * @url https://{url}/lord/policy/enlisting/know
+     * @param x 必选 int X 坐标
+     * @param y 必选 int Y 坐标
      * @return {"id":26,"created_at":"2018-12-22 12:45:57","updated_at":"2018-12-24 01:24:47"}
      * @return_param id int 资源ID
      * @return_param created_at int 创建时间
@@ -113,7 +113,6 @@ class ResourceController extends Controller
     public function knowEnlisting()
     {
         // 启动政策
-        $endTime = Policy::POLICIES_ENLISTING['time'];
         $result = (new Policy())->addWithMe(Policy::POLICIES_ENLISTING['id'], $endTime);
 
         if (is_bool($result)) {
