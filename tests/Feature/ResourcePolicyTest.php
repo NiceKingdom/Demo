@@ -1,14 +1,14 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
 use App\User;
 use Tests\TestCase;
 
-class BuildingTest extends TestCase
+class ResourcePolicyTest extends TestCase
 {
     /**
-     * 获取建筑列表
+     * 终止政令（不存在）
      */
     public function testBuildingList()
     {
@@ -18,7 +18,7 @@ class BuildingTest extends TestCase
         initDevelopment();
 
         // Logic
-        $user = User::find(16);
+        $user = User::find(1);
         $response = $this->actingAs($user)
             ->json('GET', '/building/list');
 
@@ -26,11 +26,11 @@ class BuildingTest extends TestCase
     }
 
     /**
-     * 获取建筑进程（无）
+     * 获取政令进度（不存在）
      */
     public function testSchedule()
     {
-        $user = User::find(16);
+        $user = User::find(1);
         $response = $this->actingAs($user)
             ->json('GET', '/building/schedule');
 
@@ -38,11 +38,11 @@ class BuildingTest extends TestCase
     }
 
     /**
-     * 建筑开始
+     * 启动政令
      */
     public function testBuild()
     {
-        $user = User::find(16);
+        $user = User::find(1);
         $response = $this->actingAs($user)
             ->json('POST', '/building/build', [
                 'type' => 'farm',
@@ -54,11 +54,11 @@ class BuildingTest extends TestCase
     }
 
     /**
-     * 获取建筑进程（一个）
+     * 获取政令进度（未完成）
      */
     public function testScheduleHasOne()
     {
-        $user = User::find(16);
+        $user = User::find(1);
         $response = $this->actingAs($user)
             ->json('GET', '/building/schedule');
 
@@ -66,11 +66,11 @@ class BuildingTest extends TestCase
     }
 
     /**
-     * 建筑拆除
+     * 终止政令（存在）
      */
     public function testDestroy()
     {
-        $user = User::find(16);
+        $user = User::find(1);
         $response = $this->actingAs($user)
             ->json('POST', '/building/destroy', [
                 'type' => 'farm',
@@ -82,33 +82,23 @@ class BuildingTest extends TestCase
     }
 
     /**
-     * 获取建筑进程（两个）
+     * 启动两次政令（前者尚未执行完毕）
      */
-    public function testScheduleHasZero()
+    public function testDestroy2()
     {
-        $user = User::find(16);
+        $user = User::find(1);
         $response = $this->actingAs($user)
-            ->json('GET', '/building/schedule');
-
-        $response->assertStatus(200);
-    }
-
-    /**
-     * 建筑取消拆除
-     */
-    public function testRecall()
-    {
-        $user = User::find(16);
-        $response = $this->actingAs($user)
-            ->json('POST', '/building/recall', [
-                'id' => 76,
+            ->json('POST', '/building/destroy', [
+                'type' => 'farm',
+                'level' => '1',
+                'number' => '3',
             ]);
 
         $response->assertStatus(200);
     }
 
     /**
-     * 获取建筑进程（一个）
+     * 获取政令进度（完成）
      */
     public function testScheduleHasOneAgain()
     {
@@ -117,7 +107,7 @@ class BuildingTest extends TestCase
         setBuildingListOnInstant();
 
         // Logic
-        $user = User::find(16);
+        $user = User::find(1);
         $response = $this->actingAs($user)
             ->json('GET', '/building/schedule');
 

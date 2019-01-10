@@ -86,13 +86,14 @@ class ResourceController extends Controller
             $result = (new Policy())->addWithMe($coordinate[0], $coordinate[1], Policy::POLICIES_ENLISTING['id'], $endTime);
 
             if ($result['status'] !== 200) {
-                throw new \Exception($result);
+                DB::rollBack();
+                return response($result['info'], $result['status']);
             }
             DB::commit();
             return $result['info'];
         } catch (\Exception $exception) {
             DB::rollBack();
-            return response($exception->getMessage()['info'], $exception->getMessage()['status']);
+            return response($exception->getMessage(), 500);
         }
     }
 
@@ -131,14 +132,15 @@ class ResourceController extends Controller
             $result = (new Policy())->getStatus($coordinate[0], $coordinate[1], Auth::id(), $endInfo);
 
             if ($result['status'] !== 200) {
-                throw new \Exception($result);
+                DB::rollBack();
+                return response($result['info'], $result['status']);
             }
 
             if (is_string($result['info'])) {
                 $resource = Resource::where('userId', Auth::id())->first();
                 $resource->people += $endResult;
                 if (!$resource->save()) {
-                    throw new \Exception(['status' => 500, 'info' => '保存新增流浪人失败']);
+                    throw new \Exception('保存新增流浪人失败');
                 }
             }
 
@@ -146,7 +148,7 @@ class ResourceController extends Controller
             return $result['info'];
         } catch (\Exception $exception) {
             DB::rollBack();
-            return response($exception->getMessage()['info'], $exception->getMessage()['status']);
+            return response($exception->getMessage(), 500);
         }
     }
 
@@ -174,13 +176,14 @@ class ResourceController extends Controller
             $result = (new Policy())->stopWithMe($coordinate[0], $coordinate[1]);
 
             if ($result['status'] !== 200) {
-                throw new \Exception($result);
+                DB::rollBack();
+                return response($result['info'], $result['status']);
             }
             DB::commit();
             return $result['info'];
         } catch (\Exception $exception) {
             DB::rollBack();
-            return response($exception->getMessage()['info'], $exception->getMessage()['status']);
+            return response($exception->getMessage(), 500);
         }
     }
 }
