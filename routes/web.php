@@ -23,12 +23,12 @@ Route::get ('/logout', 'Common\UserController@logout');
 
 // 领地
 Route::get ('/user/get-resource', 'Common\ResourceController@getMeResource')->middleware('resource.auto');
-Route::get ('/lord/policy/enlisting/open', 'Common\ResourceController@openEnlisting')->middleware('resource.auto');
-Route::get ('/lord/policy/enlisting/stop', 'Common\ResourceController@stopEnlisting')->middleware('resource.auto');
-Route::get ('/lord/policy/enlisting/know', 'Common\ResourceController@knowEnlisting')->middleware('resource.auto');
-Route::get ('/lord/policy/deported/open', 'Common\ResourceController@openDeported')->middleware('resource.auto');
-Route::get ('/lord/policy/deported/stop', 'Common\ResourceController@stopDeported')->middleware('resource.auto');
-Route::get ('/lord/policy/deported/know', 'Common\ResourceController@knowDeported')->middleware('resource.auto');
+Route::get ('/lord/policy/enlisting/open/{x}/{y}', 'Common\ResourceController@openEnlisting')->middleware('resource.auto');
+Route::get ('/lord/policy/enlisting/stop/{x}/{y}', 'Common\ResourceController@stopEnlisting')->middleware('resource.auto');
+Route::get ('/lord/policy/enlisting/know/{x}/{y}', 'Common\ResourceController@knowEnlisting')->middleware('resource.auto');
+Route::get ('/lord/policy/deported/open/{x}/{y}', 'Common\ResourceController@openDeported')->middleware('resource.auto');
+Route::get ('/lord/policy/deported/stop/{x}/{y}', 'Common\ResourceController@stopDeported')->middleware('resource.auto');
+Route::get ('/lord/policy/deported/know/{x}/{y}', 'Common\ResourceController@knowDeported')->middleware('resource.auto');
 
 // 建筑
 Route::get ('/building/index', 'Building\BuildingController@index')->middleware('resource.auto');

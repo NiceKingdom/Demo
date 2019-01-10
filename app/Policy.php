@@ -27,17 +27,21 @@ class Policy extends Model
             $userId = Auth::id();
         }
 
-        $policy = self::where(['x' => $x, 'y' => $y]);
+        $policy = self::where(['x' => $x, 'y' => $y])->first();
+        if (!$policy) {
+            return ['status' => 200, 'info' => '这片土地尚未施行该政策'];
+        }
         // FIXME：Map 完成后，改为校验“土地所有者”
         if ($policy->userId !== $userId) {
             return ['status' => 403, 'info' => '这是块陌生的土壤，我们没有施政权力。'];
         } else if ($policy->endTime > $_SERVER['REQUEST_TIME']) {
             return ['status' => 200, 'info' => $policy->endTime];
         } else {
+            if (UserHistory::)
             // 行政
             $userHistory = new UserHistory();
             $userHistory->userId = $userId;
-            $userHistory->status = UserHistory::STATUS['stop'];
+            $userHistory->status = UserHistory::STATUS['end'];
             $userHistory->info = $endInfo;
 
             if (!$userHistory->save()) {
@@ -65,35 +69,33 @@ class Policy extends Model
     /**
      * 为用户自己废止政策
      *
-     * @param int $policyId 政策 ID
-     * @return bool|string
+     * @param int $x X 坐标
+     * @param int $y Y 坐标
+     * @return array|bool
      */
-    public function removeWithMe(int $policyId)
+    public function stopWithMe(int $x, int $y)
     {
-        // TODO: 检测用户操作的政策，或属于用户占有的领土
-        $model = self::find($policyId);
-        if (Auth::id() === $model->userId) {
-            DB::beginTransaction();
-            try {
-                if ($model->delete()) {
-                    $userHistory = new UserHistory();
-                    $userHistory->userId = Auth::id();
-                    $userHistory->status = UserHistory::STATUS['stop'];
-                    $userHistory->info = '政策“' . self::POLICIES_TRANS[$model->policiesKey] . '”被废止。';
+        $policy = self::where(['x' => $x, 'y' => $y])->first();
+        if (!$policy || ($policy && $policy->endTime < $_SERVER['REQUEST_TIME'])) {
+            return ['status' => 200, 'info' => '这片土地尚未施行该政策，或该政策已失效'];
+        }
 
-                    if ($userHistory->save()) {
-                        DB::commit();
-                        return true;
-                    }
-                    return '失败：保存政策日志';
+        if (Auth::id() === $policy->userId) {
+            if ($policy->delete()) {
+                $userHistory = new UserHistory();
+                $userHistory->userId = Auth::id();
+                $userHistory->status = UserHistory::STATUS['stop'];
+                $userHistory->info = '政策“' . self::POLICIES_TRANS[$policy->policiesKey] . '”被废止。';
+
+                if ($userHistory->save()) {
+                    DB::commit();
+                    return true;
                 }
-            } catch (\Exception $exception) {
-                DB::rollBack();
-                return $exception->getMessage();
+                return ['status' => 500, 'info' => '政策日志保存失败'];
             }
         }
 
-        return '失败：移除政策';
+        return ['status' => 500, 'info' => '终止政策失败'];
     }
 
     /**
@@ -105,42 +107,36 @@ class Policy extends Model
      * @param int $y Y 坐标
      * @param int $endTime 结束时间
      * @param string $tips 备注
-     * @return bool|string
+     * @return bool|array
      */
     protected function add(int $key, int $userId, int $x, int $y, int $endTime = 0, string $tips = '')
     {
-        DB::beginTransaction();
-        try {
-            $model = new self();
-            $model->x = $x;
-            $model->y = $y;
-            $model->userId = $userId;
-            $model->policiesKey = $key;
-            $model->title = self::POLICIES_TRANS[$key];
-            if ($endTime) {
-                $model->endTime = $endTime;
-            }
-            if ($tips) {
-                $model->tips = $endTime;
-            }
-
-            if ($model->save()) {
-                $userHistory = new UserHistory();
-                $userHistory->userId = Auth::id();
-                $userHistory->status = UserHistory::STATUS['stop'];
-                $userHistory->info = '政策“' . self::POLICIES_TRANS[$model->policiesKey] . '”启动。';
-
-                if ($userHistory->save()) {
-                    DB::commit();
-                    return true;
-                }
-                return '失败：保存政策日志';
-            }
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            return $exception->getMessage();
+        $model = new self();
+        $model->x = $x;
+        $model->y = $y;
+        $model->userId = $userId;
+        $model->policiesKey = $key;
+        $model->title = self::POLICIES_TRANS[$key];
+        if ($endTime) {
+            $model->endTime = $endTime;
+        }
+        if ($tips) {
+            $model->tips = $endTime;
         }
 
-        return '失败：新增政策';
+        if ($model->save()) {
+            $userHistory = new UserHistory();
+            $userHistory->userId = Auth::id();
+            $userHistory->status = UserHistory::STATUS['doing'];
+            $userHistory->info = '政策“' . self::POLICIES_TRANS[$model->policiesKey] . '”启动。';
+
+            if (!$userHistory->save()) {
+                return ['status' => 500, 'info' => '政策日志保存失败'];
+            }
+            DB::commit();
+            return ['status' => 200, 'info' => $endTime];
+        }
+
+        return ['status' => 500, 'info' => '政策启动失败'];
     }
 }
