@@ -7,17 +7,21 @@ use Tests\TestCase;
 
 class ResourcePolicyTest extends TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        // Mock
+        $i = new self();
+        $i->json('GET', '/reset/redis');
+        require_once 'testHelper.php';
+        initDevelopment();
+        setBuildingListOnInstant();
+    }
+
     /**
      * 终止政令（不存在）
      */
     public function testBuildingList()
     {
-        // Mock
-        $this->json('GET', '/reset/redis');
-        require_once 'testHelper.php';
-        initDevelopment();
-
-        // Logic
         $user = User::find(1);
         $response = $this->actingAs($user)
             ->json('GET', '/building/list');
@@ -102,18 +106,18 @@ class ResourcePolicyTest extends TestCase
      */
     public function testScheduleHasOneAgain()
     {
-        // Mock
-        require_once 'testHelper.php';
-        setBuildingListOnInstant();
-
         // Logic
         $user = User::find(1);
         $response = $this->actingAs($user)
             ->json('GET', '/building/schedule');
 
         $response->assertStatus(200);
+    }
 
-        // UnMock
-        $this->json('GET', '/reset/redis');
+    static public function tearDownAfterClass()
+    {
+        $i = new self();
+        $i->assertTrue(true);
+        $i->json('GET', '/reset/redis');
     }
 }
