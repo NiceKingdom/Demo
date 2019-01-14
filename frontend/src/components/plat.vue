@@ -2,7 +2,7 @@
   <div>
     <img class="logo" src="../assets/logo.png" alt="">
     <br>
-    <p class="PS">(～￣▽￣)～ 该页面功能暂未开放，尽请期待！</p>
+    <p class="remarks">(～￣▽￣)～ 该页面功能暂未开放，尽请期待！</p>
     <br>
     <div class="test">- - - - Example - - - -</div>
     <div class="all-father">
@@ -44,7 +44,7 @@
   .test {
     color: #1fa492;
   }
-  .PS {
+  .remarks {
     color: #1fa492;
     font-weight: bold;
   }
