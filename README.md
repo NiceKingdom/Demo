@@ -34,6 +34,9 @@ npm run dev
 
 # build for production and view the bundle analyzer report
 # npm run build --report
+
+# Test
+# run `./vendor/bin/phpunit [testFile]`, eg. `tests/Feature/ResourcePolicyTest.php`
 ```
 
 ## 开发

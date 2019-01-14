@@ -6,8 +6,27 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Class UserHistory
+ *
+ * @package App
+ * @property int userId 用户名
+ * @property int x X 坐标
+ * @property int y Y 坐标
+ * @property int policiesKey 政策编号
+ * @property string title 标题
+ * @property string info 文字描述
+ * @property int endTime 结束时间
+ * @property int status 状态
+ * @property string tips 备注（闲置字段）
+ */
 class Policy extends Model
 {
+    public const STATUS = [
+        'stop' => 0,
+        'doing' => 1,
+        'end' => 2,
+    ];
     public const POLICIES_TRANS = [
         1 => '流民招募启示',
         2 => '居民驱逐通告',
@@ -21,7 +40,7 @@ class Policy extends Model
         'time' => 100,
     ];
 
-    public function getStatus(int $x, int $y, int $userId = 0, string $endInfo)
+    public function getStatus(int $x, int $y, int $userId, string $endInfo)
     {
         if (!$userId) {
             $userId = Auth::id();
@@ -37,16 +56,9 @@ class Policy extends Model
         } else if ($policy->endTime > $_SERVER['REQUEST_TIME']) {
             return ['status' => 200, 'info' => $policy->endTime];
         } else {
-            if (UserHistory::)
-            // 行政
-            $userHistory = new UserHistory();
-            $userHistory->userId = $userId;
-            $userHistory->status = UserHistory::STATUS['end'];
-            $userHistory->info = $endInfo;
+            $result = UserHistory::add($x, $y, $endInfo);
+            if ($result) return $result;
 
-            if (!$userHistory->save()) {
-                return ['status' => 500, 'info' => '政策日志保存失败'];
-            }
             return ['status' => 200, 'info' => $endInfo];
         }
     }
@@ -111,6 +123,7 @@ class Policy extends Model
      */
     protected function add(int $key, int $userId, int $x, int $y, int $endTime = 0, string $tips = '')
     {
+        // 启用政策
         $model = new self();
         $model->x = $x;
         $model->y = $y;
@@ -125,15 +138,9 @@ class Policy extends Model
         }
 
         if ($model->save()) {
-            $userHistory = new UserHistory();
-            $userHistory->userId = Auth::id();
-            $userHistory->status = UserHistory::STATUS['doing'];
-            $userHistory->info = '政策“' . self::POLICIES_TRANS[$model->policiesKey] . '”启动。';
+            $result = UserHistory::add($x, $y, $userId, '政策“' . self::POLICIES_TRANS[$model->policiesKey] . '”启动。');
 
-            if (!$userHistory->save()) {
-                return ['status' => 500, 'info' => '政策日志保存失败'];
-            }
-            DB::commit();
+            if ($result) return $result;
             return ['status' => 200, 'info' => $endTime];
         }
 

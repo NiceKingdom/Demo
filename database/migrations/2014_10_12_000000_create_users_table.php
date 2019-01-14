@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique(); # 邮箱（登录名）
             $table->string('password', 64); # 密码
             $table->string('kingdom', 12); # 王国名
-            $table->string('capital', 12); # 首都
+            $table->string('capital', 10); # 首都
             $table->rememberToken();
             $table->timestamps();
         });

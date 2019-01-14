@@ -13,7 +13,7 @@ class UsersTableSeeder extends Seeder
     {
         $_COOKIE['id'] = 0;
 
-        factory(App\User::class, 25)
+        factory(App\User::class, 10)
             ->create()
             ->each(
                 function ($u) {

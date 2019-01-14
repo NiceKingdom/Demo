@@ -21,6 +21,7 @@ class CreatePoliciesTable extends Migration
             $table->unsignedMediumInteger('policiesKey'); # 政策编号
             $table->string('title', 30); # 标题
             $table->unsignedInteger('endTime'); # 结束时间
+            $table->unsignedTinyInteger('status')->default(0);
             $table->string('tips', 1000)->nullable(); # 备注，闲置字段，供复杂功能使用
             $table->timestamps();
         });
