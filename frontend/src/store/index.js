@@ -29,14 +29,6 @@ export default new VueX.Store({
       area: '面积',
     },
   },
-  getters: {
-    doneTodos: state => {
-      return state.todos.filter(todo => todo.done)
-    },
-    getTodoById: (state) => (id) => {
-      return state.todos.find(todo => todo.id === id)
-    }
-  },
   mutations: {
     /**
      * 资源自增

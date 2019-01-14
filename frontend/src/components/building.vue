@@ -48,7 +48,6 @@
             <button class="link" @click="jump('building')">建筑</button>
             <button class="link" @click="jump('plat')">地图</button>
             <button class="link" @click="jump('#')">军事</button>
-            <button class="link" @click="click()">测试</button>
           </div>
         </div>
       </div>
@@ -279,9 +278,9 @@
         width: 100%
         text-align: center
         .link
-          margin: 3rem 2rem
-          width: 4rem
-          height: 2.4rem
-          line-height: 2.4rem
-          text-align: center
+          margin: 2rem 2rem
+</style>
+
+<style scoped lang="scss">
+  @import "../assets/scss/global_css";
 </style>

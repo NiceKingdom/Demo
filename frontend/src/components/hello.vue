@@ -124,19 +124,10 @@
       .buttons-wrapper
         margin-top: 3.2rem
         width: 100%
-        .login-btn,.register-btn
-          width: 4em
-          height: 2em
-          line-height: 2em
-          font-size: 1rem
-          font-family: '微软雅黑'
-          text-align: center
-          border: none
-          color: #ffffff
-          -webkit-border-radius: .2rem
-          -moz-border-radius: .2rem
-          border-radius: .2rem
-          background-color: #0D293E
         .login-btn
           margin-right: 2rem
+</style>
+
+<style scoped lang="scss">
+  @import "../assets/scss/global_css";
 </style>

@@ -137,8 +137,8 @@
         text-align: center
         .link
           margin: 3rem 2rem
-          width: 4rem
-          height: 2.4rem
-          line-height: 2.4rem
-          text-align: center
+</style>
+
+<style scoped lang="scss">
+  @import "../assets/scss/global_css";
 </style>

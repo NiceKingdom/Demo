@@ -2,7 +2,7 @@
   <div class="progress">
     <span class="progress-name"><small>{{process.name}}</small> - </span>
     <span v-show="!process.percent">空闲</span>
-    <div v-show="process.percent" class="allbar">
+    <div v-show="process.percent" class="allBar">
       <div :style="{ width: progressBar + 'px' }" class="bar"></div>
     </div>
     <div class="bar-value" v-show="process.percent">{{Math.ceil(progressBar)}}%</div>
@@ -38,7 +38,6 @@
       setInterval(update, 1000)
       function update () {
         let nowTime = self.nowTime()
-        console.info(nowTime)
         if (self.process.action) {
           if (self.process.endTime > nowTime) {
             let allTime = self.process.endTime - self.process.startTime // 整个进程的时间
@@ -61,7 +60,8 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+  @import "../../assets/scss/global_css";
   .progress {
     position: relative;
     left: 0;
@@ -69,7 +69,7 @@
     min-width: 150px;
     height: 20px;
   }
-  .allbar {
+  .allBar {
     display: inline-block;
     width: 100px;
     height: 10px;
