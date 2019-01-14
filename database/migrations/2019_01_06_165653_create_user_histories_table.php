@@ -19,7 +19,7 @@ class CreateUserHistoriesTable extends Migration
             $table->unsignedInteger('x'); # X 坐标
             $table->unsignedInteger('y'); # Y 坐标
             $table->string('info', 144); # 历史信息
-            $table->unsignedTinyInteger('status')->default(0);
+            $table->unsignedTinyInteger('category');
             $table->timestamps(); # 时间使用 created_at
         });
     }

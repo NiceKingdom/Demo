@@ -40,26 +40,28 @@ class Policy extends Model
         'time' => 100,
     ];
 
-    public function getStatus(int $x, int $y, int $userId, string $endInfo)
+    public function getStatus(int $key, int $userId, int $x, int $y, string $endInfo)
     {
         if (!$userId) {
             $userId = Auth::id();
         }
 
-        $policy = self::where(['x' => $x, 'y' => $y])->first();
+        $policy = self::where(['x' => $x, 'y' => $y, 'policiesKey' => $key, 'status' => self::STATUS['doing']])->first();
         if (!$policy) {
-            return ['status' => 200, 'info' => '这片土地尚未施行该政策'];
+            return '这片土地尚未施行该政策，或该政策已失效';
         }
         // FIXME：Map 完成后，改为校验“土地所有者”
         if ($policy->userId !== $userId) {
             return ['status' => 403, 'info' => '这是块陌生的土壤，我们没有施政权力。'];
         } else if ($policy->endTime > $_SERVER['REQUEST_TIME']) {
-            return ['status' => 200, 'info' => $policy->endTime];
+            return $policy->endTime;
         } else {
-            $result = UserHistory::add($x, $y, $endInfo);
+            $policy->status = self::STATUS['end'];
+            $result = UserHistory::add($userId, $x, $y, $endInfo, UserHistory::CATEGORY['policy']);
             if ($result) return $result;
+            if (!$policy->save()) return ['status' => 500, 'info' => '保存政策失败'];
 
-            return ['status' => 200, 'info' => $endInfo];
+            return $endInfo;
         }
     }
 
@@ -73,7 +75,7 @@ class Policy extends Model
      * @param string $tips 备注
      * @return bool|string
      */
-    public function addWithMe(int $x, int $y, int $key, int $endTime = 0, string $tips = '')
+    public function addWithMe(int $key, int $x, int $y, int $endTime = 0, string $tips = '')
     {
         return $this->add($key, Auth::id(), $x, $y, $endTime, $tips);
     }
@@ -83,27 +85,27 @@ class Policy extends Model
      *
      * @param int $x X 坐标
      * @param int $y Y 坐标
+     * @param int $key 政策 Key
      * @return array|bool
      */
-    public function stopWithMe(int $x, int $y)
+    public function stopWithMe(int $key, int $x, int $y)
     {
-        $policy = self::where(['x' => $x, 'y' => $y])->first();
+        $policy = self::where(['x' => $x, 'y' => $y, 'policiesKey' => $key, 'status' => self::STATUS['doing']])->first();
         if (!$policy || ($policy && $policy->endTime < $_SERVER['REQUEST_TIME'])) {
-            return ['status' => 200, 'info' => '这片土地尚未施行该政策，或该政策已失效'];
+            return '这片土地尚未施行该政策，或该政策已失效';
         }
 
         if (Auth::id() === $policy->userId) {
             if ($policy->delete()) {
-                $userHistory = new UserHistory();
-                $userHistory->userId = Auth::id();
-                $userHistory->status = UserHistory::STATUS['stop'];
-                $userHistory->info = '政策“' . self::POLICIES_TRANS[$policy->policiesKey] . '”被废止。';
+                $result = UserHistory::add(
+                    $x, $y, Auth::id(),
+                    '政策“' . self::POLICIES_TRANS[$policy->policiesKey] . '”被废止。',
+                    UserHistory::CATEGORY['policy']
+                );
+                if ($result) return $result;
 
-                if ($userHistory->save()) {
-                    DB::commit();
-                    return true;
-                }
-                return ['status' => 500, 'info' => '政策日志保存失败'];
+                DB::commit();
+                return '政策已终止';
             }
         }
 
@@ -127,6 +129,7 @@ class Policy extends Model
         $model = new self();
         $model->x = $x;
         $model->y = $y;
+        $model->status = self::STATUS['doing'];
         $model->userId = $userId;
         $model->policiesKey = $key;
         $model->title = self::POLICIES_TRANS[$key];
@@ -134,14 +137,18 @@ class Policy extends Model
             $model->endTime = $endTime;
         }
         if ($tips) {
-            $model->tips = $endTime;
+            $model->tips = $tips;
         }
 
         if ($model->save()) {
-            $result = UserHistory::add($x, $y, $userId, '政策“' . self::POLICIES_TRANS[$model->policiesKey] . '”启动。');
+            $result = UserHistory::add(
+                $x, $y, $userId,
+                '政策“' . self::POLICIES_TRANS[$model->policiesKey] . '”启动。',
+                UserHistory::CATEGORY['policy']
+            );
 
             if ($result) return $result;
-            return ['status' => 200, 'info' => $endTime];
+            return $endTime;
         }
 
         return ['status' => 500, 'info' => '政策启动失败'];

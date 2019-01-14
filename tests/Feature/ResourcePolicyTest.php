@@ -6,6 +6,11 @@ use App\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+// TODO: 尝试改写 time
+function time($timestamp = 0) {
+    return $timestamp ?: \time();
+}
+
 class ResourcePolicyTest extends TestCase
 {
     protected const USER_ID = 1;
