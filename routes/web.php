@@ -23,6 +23,7 @@ Route::get ('/logout', 'Common\UserController@logout');
 
 // 领地
 Route::get ('/user/get-resource', 'Common\ResourceController@getMeResource')->middleware('resource.auto');
+Route::post('/lord/policy/history', 'Common\ResourceController@getPolicyHistory')->middleware('resource.auto');
 Route::post('/lord/policy/enlisting/open', 'Common\ResourceController@openEnlisting')->middleware('resource.auto');
 Route::get ('/lord/policy/enlisting/stop/{x}/{y}', 'Common\ResourceController@stopEnlisting')->middleware('resource.auto');
 Route::get ('/lord/policy/enlisting/know/{x}/{y}', 'Common\ResourceController@knowEnlisting')->middleware('resource.auto');
