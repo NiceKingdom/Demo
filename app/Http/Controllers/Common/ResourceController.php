@@ -151,7 +151,7 @@ class ResourceController extends Controller
      * @url https://{url}/lord/policy/enlisting/know/{x}/{y}
      * @param x 必选 int X坐标
      * @param y 必选 int Y坐标
-     * @return {"id":26,"created_at":"2018-12-22 12:45:57","updated_at":"2018-12-24 01:24:47"}
+     * @return 1546777084
      * @return_param id int 资源ID
      * @return_param created_at int 创建时间
      * @return_param updated_at int 更新时间
@@ -312,7 +312,7 @@ class ResourceController extends Controller
      * @url https://{url}/lord/policy/deported/know/{x}/{y}
      * @param x 必选 int X坐标
      * @param y 必选 int Y坐标
-     * @return {"id":26,"created_at":"2018-12-22 12:45:57","updated_at":"2018-12-24 01:24:47"}
+     * @return 1546777084
      * @return_param id int 资源ID
      * @return_param created_at int 创建时间
      * @return_param updated_at int 更新时间
@@ -355,7 +355,7 @@ class ResourceController extends Controller
     /**
      * showdoc
      * @catalog 前后端接口/领地
-     * @title [动作]终止流民招募启示
+     * @title [动作]终止居民驱逐通告
      * @description 直接结束招募，但不退还发执行政令的费用
      * @method get
      * @url https://{url}/lord/policy/deported/stop/{x}/{y}
