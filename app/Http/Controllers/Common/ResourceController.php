@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Common;
 
 use App\Models\Resource;
 use App\Policy;
+use App\UserHistory;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -51,6 +52,41 @@ class ResourceController extends Controller
         $info = Resource::where('userId', Auth::id())->first();
 
         return $info;
+    }
+
+    /**
+     * showdoc
+     * @catalog 前后端接口/政策
+     * @title [获取]政策历史
+     * @description -
+     * @method post
+     * @url https://{url}/lord/policy/history
+     * @param page 必选 int 当前页数，从1开始
+     * @param size 必选 int 单页历史数量
+     * @param x 必选 int X坐标
+     * @param y 必选 int Y坐标
+     * @return [{"id":2,"info":"\u653f\u7b56\u201c\u5c45\u6c11\u9a71\u9010\u901a\u544a\u201d\u7ed3\u675f\u4e86\uff0c\u6211\u4eec\u72e0\u5fc3\u5730\u9a71\u9010\u4e861\u4f4d\u5c45\u6c11\u3002","created_at":"2019-01-15 02:30:06"},{"id":3,"info":"\u653f\u7b56\u201c\u5c45\u6c11\u9a71\u9010\u901a\u544a\u201d\u542f\u52a8\u3002","created_at":"2019-01-15 02:30:06"},{"id":4,"info":"\u653f\u7b56\u201c\u5c45\u6c11\u9a71\u9010\u901a\u544a\u201d\u7ed3\u675f\u4e86\uff0c\u6211\u4eec\u72e0\u5fc3\u5730\u9a71\u9010\u4e861\u4f4d\u5c45\u6c11\u3002","created_at":"2019-01-15 02:30:10"}]
+     * @return_param id int 事件ID
+     * @return_param info int 简述
+     * @return_param created_at int 发生时间
+     * @number 10
+     */
+    public function getPolicyHistory(Request $request)
+    {
+        $page = (int)$request['page'];
+        $size = (int)$request['size'];
+        $x = (int)$request['x'];
+        $y = (int)$request['y'];
+        if ($page < 1 || $size < 1 || !$x || !$y) {
+            return response('参数错误', 400);
+        }
+        $page -= 1;
+
+        return UserHistory::select('id', 'info', 'created_at')
+            ->where(['x' => $x, 'y' => $y, 'userId' => Auth::id(), 'category' => UserHistory::CATEGORY['policy']])
+            ->offset($page * $size)
+            ->limit($size)
+            ->get();
     }
 
     /**
