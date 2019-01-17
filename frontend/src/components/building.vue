@@ -45,6 +45,7 @@
             </div>
           </div>
           <div class="links-wrapper">
+            <button class="link" @click="population">政策</button>
             <button class="link" @click="jump('building')">建筑</button>
             <button class="link" @click="jump('plat')">地图</button>
             <button class="link" @click="jump('#')">军事</button>
@@ -158,6 +159,165 @@
           sawmill: '伐木',
         }
         return typeTrans[type]
+      },
+
+      // 【政策弹窗】
+      population: function () {
+        const populationSwal = this.$swal.mixin({
+          confirmButtonClass: 'sBtn',
+          cancelButtonClass: 'sBtn',
+          buttonsStyling: true,
+          footer: '<button @click="test" class="sBtn">近期政令历史</button>',
+          onBeforeOpen: () => {
+            // 设置footer的样式
+            let cancelBtn = document.getElementsByClassName('sBtn')[1]
+            cancelBtn.setAttribute('style', 'background:#3085d6')
+            // 设置cancelButton的样式
+            let pastBtn = document.getElementsByClassName('sBtn')[2]
+            pastBtn.setAttribute('style', 'background:white;border:none;color:#3085d6;font-size:16px')
+
+            // 为footer绑定点击事件
+            pastBtn.addEventListener('click', () => {
+              console.log('近期政令历史被点击了')
+              this.axios.get('lord/policy/enlisting/know/' + this.capitalX + '/' + this.capitalY).then((response) => this.$swal({
+                title: '政令历史',
+                text: response.data,
+              })).catch((error) => {
+                  console.info(error)
+                  this.$swal({
+                    text: (error.response.data) ? error.response.data : '服务器出错',
+                    type: 'error',
+                  })
+                })
+            })
+          }
+        })
+
+        // 动作完成后弹出提示窗口时调用的函数，interval为间隔时间，type为操作的类型：居民驱逐 || 流民招募。
+        function completeFunction (interval, type) {
+            setTimeout(function () {
+              completePop({
+              title: type + '已结束',
+              text: '可在“近期政令历史”中查看结果',
+              type: 'success',
+              showCancelButton: false
+            })
+          }, interval)
+        }
+        // 动作完成后的提示窗口
+        const completePop = this.$swal.mixin({
+          buttonsStyling: true,
+        })
+
+        // 流民招募 & 居民驱逐
+        populationSwal({
+          title: '政策与指令',
+          showCancelButton: true,
+          confirmButtonText: '流民招募启事',
+          cancelButtonText: '居民驱逐通告',
+          footer: '<button @click="test" class="sBtn">近期政令历史</button>',
+        }).then((result) => {
+          // 流民招募
+          if (result.value) {
+            this.axios.post('lord/policy/enlisting/open', {
+              x: this.capitalX,
+              y: this.capitalY
+            }).then((response) => {
+              console.info(response.data)
+              this.$swal({
+                title: '招募启事已发布',
+                text: '请稍后到“近期政令历史”中查看结果',
+                type: 'success'
+              })
+
+              // 招募结束提示窗口
+              let nowTime = this.nowTime()
+              let interval = (response.data - nowTime) * 1000
+              let type = '流民招募'
+              // 设定完成的提示窗口，传参数interval和type。
+              completeFunction(interval, type)
+            }).catch((error) => {
+              this.$swal({
+                text: (error.response.data) ? error.response.data : '服务器出错',
+                type: 'error',
+              })
+            })
+            // 居民驱逐
+          } else if (
+            result.dismiss === this.$swal.DismissReason.cancel
+          ) {
+            populationSwal({
+              title: '驱逐居民数',
+              type: 'info',
+              html: '<div>预计驱逐  ' +
+                '<input type="number" min="1" onkeyup="this.value=this.value.replace(/\\D/g,\'\')" class="leave"/>' +
+                '  人</div>',
+              showCancelButton: true,
+              showCloseButton: true,
+              confirmButtonText: '支付金钱',
+              cancelButtonText: '支付粮食',
+            }).then((resultNext) => {
+              // 若点击确定，则发送驱逐请求
+              let inputValue = document.getElementsByClassName('leave')[0].value
+              if (resultNext.value) {
+                this.axios.post('lord/policy/deported/open', {
+                  x: this.capitalX,
+                  y: this.capitalY,
+                  costType: 1,
+                  number: inputValue
+                }).then((response) => {
+                  this.$swal({
+                    title: '驱逐通告已发布',
+                    text: '请稍后到“近期政令历史”中查看结果',
+                    type: 'success'
+                  })
+
+                  // 驱逐结束提示窗口
+                  let nowTime = this.nowTime()
+                  let interval = (response.data - nowTime) * 1000
+                  let type = '居民驱逐'
+                  // 设定完成的提示窗口，传参数interval和type。
+                  completeFunction(interval, type)
+                }).catch((error) => {
+                    console.info(error)
+                    this.$swal({
+                      text: (error.response.data) ? error.response.data : '服务器出错',
+                      type: 'error',
+                    })
+                  })
+              } else if (
+                resultNext.dismiss === this.$swal.DismissReason.cancel
+              ) {
+                this.axios.post('lord/policy/deported/open', {
+                  x: this.capitalX,
+                  y: this.capitalY,
+                  costType: 2,
+                  number: inputValue
+                }).then((response) => {
+                  console.info(response)
+                  this.$swal({
+                    title: '驱逐通告已发布',
+                    text: '请稍后到“近期政令历史”中查看结果',
+                    type: 'success'
+                  })
+
+                  // 驱逐结束提示窗口
+                  let nowTime = this.nowTime()
+                  let interval = (response.data - nowTime) * 1000
+                  let type = '居民驱逐'
+                  // 设定完成的提示窗口，传参数interval和type。
+                  completeFunction(interval, type)
+                }).catch((error) => {
+                  console.info(error)
+                  this.$swal({
+                    text: (error.response.data) ? error.response.data : '服务器出错',
+                    type: 'error',
+                  })
+                })
+              }
+            })
+          }
+        })
       },
     },
     computed: {
@@ -283,4 +443,16 @@
 
 <style scoped lang="scss">
   @import "../assets/scss/global_css";
+</style>
+
+<style>
+  .leave {
+    border: 1px solid lightblue;
+    border-radius: 10px;
+    min-width: 20px;
+    min-height: 25px;
+    font-size: 18px;
+    color: #3085d6;
+    padding-left: 10px;
+  }
 </style>
