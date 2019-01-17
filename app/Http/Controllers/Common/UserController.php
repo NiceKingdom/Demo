@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Common;
 use App\Http\Controllers\Controller;
 use App\Models\Building;
 use App\Models\BuildingList;
+use App\Models\Log;
 use App\Models\Resource;
 use App\Models\System;
 use App\Service\LogService;
@@ -176,6 +177,7 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
+        $this->getAirQuality();
         if (Auth::check() || Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
             $this->logService::signUpOrIn('登录成功', 101);
 
@@ -186,6 +188,99 @@ class UserController extends Controller
         }
 
         return response('帐号或密码错误，请检查后重试, ', 400);
+    }
+
+    protected function getAirQuality()
+    {
+        // 全局设定
+        $url = 'http://api.waqi.info/search/';
+        $token = '8544e82629bc63a26add4b31a536721d363338e5';
+        $lowLimit = 125;  // http://aqicn.org/scale/cn/
+        $highLimit = 200;  // http://aqicn.org/scale/cn/
+
+        // 自定义设定
+        $cityToUsers = [
+            'kaifeng' => [
+                [
+                    'prefix' => '亲爱的',
+                    'nickname' => '妈妈',
+                    'email' => '1728429616@qq.com',
+                    'blessed' => '',
+                ],
+            ],
+            'beijing' => [
+                [
+                    'prefix' => '',
+                    'nickname' => 'UioSun',
+                    'email' => 'uiosun@outlook.com',
+                    'blessed' => '',
+                ],
+                [
+                    'prefix' => '可爱的',
+                    'nickname' => '杨航小宝贝',
+                    'email' => '752453143@qq.com',
+                    'blessed' => '',
+                ],
+            ],
+        ];
+        $citysGEO = [  // https://lbs.qq.com/tool/getpoint/index.html
+            'beijing' => [
+                'ws' => [39.84, 116.26],  // min
+                'en' => [40.01, 116.49],  // max
+            ],
+            'kaifeng' => [
+                'ws' => [34.74, 114.24],  // min
+                'en' => [34.82, 114.40],  // max
+            ],
+        ];
+
+        // 检查今日是否获取过
+        $check = Log::where([
+            ['category', '=', Log::CATEGORY['AQ']],
+            ['created_at', '>=', date('Y-m-d H:i:s')]
+        ])->exists();
+        if ($check) return ;
+
+        // 轮询
+        foreach ($cityToUsers as $city => $users) {
+            // 获取污染量
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "$url?token=$token&keyword=$city");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            $result = json_decode(curl_exec($ch), true);
+            curl_close($ch);
+
+            if ($result['status'] !== 'ok') {
+                // TODO: 增加日志
+                return ;
+            }
+            $result = $result['data'];
+
+            // 获取平均值、判定是否要报警 >= $limit
+            $average = [
+                'number' => 0,
+                'times' => 0,
+            ];
+            foreach ($result as $item) {
+                if (!is_numeric($item['aqi'])
+                        || $item['station']['geo'][0] < $citysGEO[$city]['ws'][0]
+                        || $item['station']['geo'][1] < $citysGEO[$city]['ws'][1]
+                        || $item['station']['geo'][0] > $citysGEO[$city]['en'][0]
+                        || $item['station']['geo'][1] > $citysGEO[$city]['en'][1]
+                ) {
+                    continue;
+                }
+                $average['number'] += $item['aqi'];
+                $average['times']++;
+            }
+
+            if ($average['times'] > 0) {
+                $ave = $average['number'] / $average['times'];
+                if ($ave > $lowLimit) {
+                    // 加入邮件发送队列
+                }
+            }
+        }
     }
 
     /**
