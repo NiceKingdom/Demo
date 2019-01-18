@@ -19,7 +19,7 @@
               <div class="building">
                 <p>
                   <span>建筑清单：</span>
-                  <span class="button farmWood"
+                  <span class="button farm-wood"
                         v-for="type in buildType"
                         @click="toggle(type)"
                         :key="type">{{typeTrans(type)}}</span>
@@ -283,7 +283,7 @@
 
 <style scoped lang="scss">
   @import "../assets/scss/global_css";
-  .farmWood {
+  .farm-wood {
     height: 30px;
     width: 50px;
     margin: 0 5px;
