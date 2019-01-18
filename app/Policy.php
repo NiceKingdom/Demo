@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 /**
  * Class UserHistory
  *
- * @package App
+ * @package Policy
  * @property int userId 用户名
  * @property int x X 坐标
  * @property int y Y 坐标

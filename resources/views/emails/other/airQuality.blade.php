@@ -94,7 +94,7 @@
 
     </style>
 </head>
-<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" bgcolor="#f4f4f4" style="margin:0; padding:0; -webkit-text-size-adjust:none; -ms-text-size-adjust:none;">
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" bgcolor="#f4f4f4" style="-webkit-text-size-adjust:none; -ms-text-size-adjust:none;">
 <table cellpadding="0" cellspacing="0" border="0" height="100%" width="100%" bgcolor="#f4f4f4" id="bodyTable" style="border-collapse: collapse;table-layout: fixed;margin:0 auto;"><tr><td>
 
             <!-- Hidden Preheader Text : BEGIN -->
@@ -137,7 +137,7 @@
                         <table border="0" width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff">
                             <tr>
                                 <td valign="middle" align="center" style="padding: 40px 0;text-align: center;">
-                                    {{ $userInfo['prefix'] }}{{ $userInfo['nickname'] }}，今天的空气质量不太好，<b>{{ $userInfo['city'] }}</b>的 PM 2.5 达到了 <span style="color: #f3a710;">{{ $userInfo['pm2.5'] }}</span>
+                                    {{ $userInfo['prefix'] }}{{ $userInfo['nickname'] }}，今天的空气质量不太好，<b>{{ $userInfo['city'] }}</b>的 PM 2.5 达到了 <span style="color: #f3a710;">{{ (int)$userInfo['pm2.5'] }}</span>
                                     <br><br><span style="color: #38aace">{{ $userInfo['blessed'] ?: '为了关心你的人和自己，出门请带好口罩，么么扎。' }}</span>
                                 </td>
                             </tr>

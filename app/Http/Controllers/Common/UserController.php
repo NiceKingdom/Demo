@@ -179,7 +179,7 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
-        return $this->getAirQuality();
+        $this->getAirQuality();
         if (Auth::check() || Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
             $this->logService::signUpOrIn('登录成功', 101);
 
@@ -240,7 +240,8 @@ class UserController extends Controller
         // 检查今日是否获取过
         $check = Log::where([
             ['category', '=', Log::CATEGORY['AQ']],
-            ['created_at', '>=', date('Y-m-d H:i:s')]
+            ['status', '=', Log::DEFAULT_SUCCESS],
+            ['created_at', '>=', date('Y-m-d')]
         ])->exists();
         if ($check) return ;
 
@@ -253,8 +254,21 @@ class UserController extends Controller
             $result = json_decode(curl_exec($ch), true);
             curl_close($ch);
 
-            if ($result['status'] !== 'ok') {
-                // TODO: 增加日志
+            $errorInfo = false;
+            if (!is_array($result)) {
+                $errorInfo = '获取数据格式有误';
+            } elseif ($result['status'] !== 'ok') {
+                $errorInfo = $result['data'] ?? '未知的错误原因';
+            }
+            if ($errorInfo) {
+                $logModel = new Log();
+                $logModel->category = Log::CATEGORY['AQ'];
+                $logModel->status = Log::DEFAULT_ERROR;
+                $logModel->info = $errorInfo;
+                $logModel->localization = '-';
+                $logModel->userId = 0;
+                $logModel->uri = 'UserController::getAirQuality';
+                $logModel->ip = '-';
                 return ;
             }
             $result = $result['data'];
@@ -279,13 +293,24 @@ class UserController extends Controller
 
             if ($average['times'] > 0) {
                 $ave = $average['number'] / $average['times'];
-                if ($ave > $lowLimit) {
-                    foreach ($users as $user) {
-                        $user['pm2.5'] = $ave;
-                        $user['city'] = $cityTrans[$city];
-                        // 加入邮件发送队列
-                        Mail::to($user['email'])->send(new AirQualityWarning($user));
-                    }
+            }
+
+            $logModel = new Log();
+            $logModel->category = Log::CATEGORY['AQ'];
+            $logModel->status = Log::DEFAULT_SUCCESS;
+            $logModel->info = $cityTrans[$city] . $ave;
+            $logModel->localization = '-';
+            $logModel->userId = 0;
+            $logModel->uri = 'UserController::getAirQuality';
+            $logModel->ip = '-';
+
+            if ($logModel->save() && $ave > $lowLimit) {
+                foreach ($users as $user) {
+                    $user['pm2.5'] = $ave;
+                    $user['city'] = $cityTrans[$city];
+
+                    // 发送邮件
+                    Mail::to($user['email'])->send(new AirQualityWarning($user));
                 }
             }
         }

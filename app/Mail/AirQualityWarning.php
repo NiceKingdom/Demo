@@ -31,7 +31,8 @@ class AirQualityWarning extends Mailable
      */
     public function build()
     {
-        return $this->from('UioSun@163.com')
+        return $this->from('UioSun@163.com', 'UioSun')
+            ->subject('空气质量小提醒')
             ->view('emails.other.airQuality');
     }
 }
