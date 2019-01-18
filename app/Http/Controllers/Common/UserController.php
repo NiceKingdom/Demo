@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Common;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AirQualityWarning;
 use App\Models\Building;
 use App\Models\BuildingList;
 use App\Models\Log;
@@ -12,6 +13,7 @@ use App\User;
 use App\Service\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
@@ -177,7 +179,7 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
-        $this->getAirQuality();
+        return $this->getAirQuality();
         if (Auth::check() || Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
             $this->logService::signUpOrIn('登录成功', 101);
 
@@ -233,6 +235,7 @@ class UserController extends Controller
                 'en' => [34.82, 114.40],  // max
             ],
         ];
+        $cityTrans = ['beijing' => '北京', 'kaifeng' => '开封'];
 
         // 检查今日是否获取过
         $check = Log::where([
@@ -277,7 +280,12 @@ class UserController extends Controller
             if ($average['times'] > 0) {
                 $ave = $average['number'] / $average['times'];
                 if ($ave > $lowLimit) {
-                    // 加入邮件发送队列
+                    foreach ($users as $user) {
+                        $user['pm2.5'] = $ave;
+                        $user['city'] = $cityTrans[$city];
+                        // 加入邮件发送队列
+                        Mail::to($user['email'])->send(new AirQualityWarning($user));
+                    }
                 }
             }
         }

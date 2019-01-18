@@ -11,14 +11,17 @@ class AirQualityWarning extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $userInfo;
+
     /**
      * Create a new message instance.
      *
+     * @param array $userInfo 用户信息
      * @return void
      */
-    public function __construct()
+    public function __construct(array $userInfo)
     {
-        //
+        $this->userInfo = $userInfo;
     }
 
     /**
@@ -28,7 +31,7 @@ class AirQualityWarning extends Mailable
      */
     public function build()
     {
-        return $this->from('example@example.com')
-            ->view('emails.orders.shipped');
+        return $this->from('UioSun@163.com')
+            ->view('emails.other.airQuality');
     }
 }
