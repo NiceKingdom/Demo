@@ -156,12 +156,51 @@ class BuildingService
                 DB::commit();
                 return ['succeed', '施工队已经开始工作'];
             } else {
-                DB::rollBack();
-                return ['failed', '因为意外，建筑队未能启动工作'];
+                throw new \Exception('因为意外，建筑队未能启动工作');
             }
         } catch (\Exception $exception) {
             DB::rollBack();
             $logID = 'BbbBT' . logService::common('建筑启动失败 - ' . $exception->getMessage(), 500, 'Service\BuildingService::destroy', 'Error');
+            return response('意外情况，编号：' . $logID, 500);
+        }
+    }
+
+    /**
+     * 取消建造，返还部分资源，解除占用
+     *
+     * @param int $scheduleKey 施工队的键
+     * @return array|\Illuminate\Contracts\Routing\ResponseFactory|string|\Symfony\Component\HttpFoundation\Response
+     */
+    public function buildRecall(int $scheduleKey)
+    {
+        $schedule = $this->schedules[$scheduleKey];
+
+        $item = $this->getBuildingList();
+        $item = $item[$schedule['type']][$schedule['level'] - 1];
+        $resource = Resource::where('userId', Auth::id())->first();
+        // 返还部分资源
+        foreach ($item['material'] as $key => $value) {
+            $resource->$key += intval($value * $schedule['number'] * (1 - self::ABANDON_RATE));
+        }
+
+        // 解除占用
+        foreach ($item['occupy'] as $key => $value) {
+            $resource->$key += $value * $schedule['number'];
+        }
+
+        DB::beginTransaction();
+        try {
+            if (!$resource->save()) {
+                throw new \Exception('因为意外，建筑队未能终止工作');
+            }
+
+            // 删除建筑进程
+            $this->deleteSchedule($this->schedules[$scheduleKey]->id);
+            DB::commit();
+            return ['succeed', '已取消该施工项目'];
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            $logID = 'JeihC' . logService::common('取消失败：' . $exception->getMessage(), 500, 'Service\BuildingService::buildRecall', 'Error');
             return response('意外情况，编号：' . $logID, 500);
         }
     }
@@ -205,7 +244,6 @@ class BuildingService
                 DB::commit();
                 return ['succeed', '建筑完成'];
             } else {
-                DB::rollBack();
                 throw new \Exception('因未预料的意外，建筑失败');
             }
         } catch (\Exception $exception) {
@@ -216,40 +254,30 @@ class BuildingService
     }
 
     /**
-     * 拆除建筑，返还部分资源，解除占用，降低建筑数量、降低产出
+     * 开始拆除，降低建筑数量与产出、解除占用
      *
      * @param string $type 建筑类型
      * @param int $level 建筑级别
      * @param int $number 建筑数量
      * @return array|\Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
-    public function destroy(string $type, int $level, int $number)
+    public function destroyBefore(string $type, int $level, int $number)
     {
-//        TODO: 拆除也需要消耗时间
-//        if (!$schedule = $this->getSleep()) {
-//            return ['failed', '无可用建筑'];
-//        }
+        if (!$schedule = $this->getSleep()) {
+            return ['failed', '无可用施工队'];
+        }
+        $startTime = time();
         $item = $this->getBuildingList();
         $item = $item[$type][$level - 1];
+        $endTime = $startTime + $item['time'] * $number;
 
         $resource = Resource::where('userId', Auth::id())->first();
         $building = Building::where('userId', Auth::id())->first();
 
         // 降低建筑数量
-        if ($level < 10)
-            $level = '0' . $level;
+        if ($level < 10) $level = '0' . $level;
         $buildingName = $type . $level;
         $building->$buildingName -= $number;
-
-        // 返还部分资源
-        foreach ($item['material'] as $key => $value) {
-            $resource->$key += intval($value * $number * self::RETURN_RATE);
-        }
-
-        // 解除占用
-        foreach ($item['occupy'] as $key => $value) {
-            $resource->$key += $value * $number;
-        }
 
         // 降低产出
         foreach ($item['product'] as $key => $value) {
@@ -257,15 +285,25 @@ class BuildingService
             $resource->$itemName -= $value * $number;
         }
 
+        // 解除占用
+        foreach ($item['occupy'] as $key => $value) {
+            $resource->$key += $value * $number;
+        }
+
         DB::beginTransaction();
         try {
-            if ($resource->save() && $building->save()) {
-//                $this->deleteSchedule($this->schedules[$key]->id);
-                DB::commit();
-                return ['succeed', '拆除完成'];
-            } else {
+            // 增加建筑队列
+            $result = $this->addSchedule($schedule->id, BuildingList::ACTION_DESTROY,
+                $type, $level, $number, $startTime, $endTime);
+            if ($result) {
                 DB::rollBack();
-                return ['failed', '因未预料的意外，拆除失败'];
+                return ['failed', $result];
+            }
+            if ($resource->save() && $building->save()) {
+                DB::commit();
+                return ['succeed', '拆除启动'];
+            } else {
+                throw new \Exception('因未预料的意外，建筑拆除无法启动');
             }
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -275,43 +313,42 @@ class BuildingService
     }
 
     /**
-     * 取消建造，返还部分资源，解除占用
+     * 拆除完毕，返还部分资源
      *
      * @param int $scheduleKey 施工队的键
-     * @return array|\Illuminate\Contracts\Routing\ResponseFactory|string|\Symfony\Component\HttpFoundation\Response
+     * @return array|\Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
-    public function buildRecall(int $scheduleKey)
+    public function destroy(int $scheduleKey)
     {
         $schedule = $this->schedules[$scheduleKey];
-
+        $type = $schedule->type;
+        $level = $schedule->level;
+        $number = $schedule->number;
         $item = $this->getBuildingList();
-        $item = $item[$schedule['type']][$schedule['level'] - 1];
-        $resource = Resource::where('userId', Auth::id())->first();
-        // 返还部分资源
-        foreach ($item['material'] as $key => $value) {
-            $resource->$key += intval($value * $schedule['number'] * (1 - self::ABANDON_RATE));
-        }
+        $item = $item[$type][$level - 1];
 
-        // 解除占用
-        foreach ($item['occupy'] as $key => $value) {
-            $resource->$key += $value * $schedule['number'];
+        $resource = Resource::where('userId', Auth::id())->first();
+
+        // 返还资源
+        foreach ($item['material'] as $key => $value) {
+            $resource->$key += intval($value * $number * self::RETURN_RATE);
         }
 
         DB::beginTransaction();
         try {
-            if (!$resource->save()) {
-                DB::rollBack();
-                return ['failed', '因为意外，建筑队未能终止工作'];
+            if ($resource->save()) {
+                if ($result = $this->deleteSchedule($schedule)) {
+                    throw new \Exception($result);
+                }
+                DB::commit();
+                return ['succeed', '建筑拆除了'];
+            } else {
+                throw new \Exception('因未预料的意外，建筑拆除失败');
             }
-
-            // 删除建筑进程
-            $this->deleteSchedule($this->schedules[$scheduleKey]->id);
-            DB::commit();
-            return ['succeed', '已取消该施工项目'];
         } catch (\Exception $exception) {
             DB::rollBack();
-            $logID = 'JeihC' . logService::common('取消失败：' . $exception->getMessage(), 500, 'Service\BuildingService::buildRecall', 'Error');
-            return response('意外情况，编号：' . $logID, 500);
+            $logID = 'Bbs' . logService::common('拆除失败 - ' . $exception->getMessage(), 500, 'Service\BuildingService::destroy', 'Error');
+            return ['failed', '意外情况，编号：' . $logID];
         }
     }
 }

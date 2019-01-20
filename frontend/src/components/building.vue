@@ -83,57 +83,70 @@
           })
           return false
         }
+        if (!data) {
+          this.$swal({
+            text: '程序的生命中，缺少了永恒般的基因（这却不是你的错误）。',
+            type: 'error',
+          })
+          return false
+        }
         data.type = this.activeType
         data.number = this.actionNumber
-        if (data) {
-          this.axios.post('building/build', data).then((response) => {
-            let type = 'success'
-            if (response.data[0] === 'failed') {
-              type = 'error'
-            }
-            this.$swal({
-              text: response.data[1],
-              type: type,
-            })
-          }).catch((error) => {
-            this.$swal({
-              text: (error.response.data) ? error.response.data : '服务器出错',
-              type: 'error',
-            })
+        // 发送建筑请求
+        this.axios.post('building/build', data).then((response) => {
+          let type = 'success'
+          if (response.data[0] === 'failed') {
+            type = 'error'
+          }
+          this.$swal({
+            text: response.data[1],
+            type: type,
           })
+        }).catch((error) => {
+          this.$swal({
+            text: (error.response.data) ? error.response.data : '服务器出错',
+            type: 'error',
+          })
+        })
 
-          // 请求当前领地的资源
-          this.axios.get('user/get-resource').then((response) => {
+        // 请求当前领地的资源
+        this.axios.get('user/get-resource').then((response) => {
+          if (response[0] === 'success') {
             localStorage.setItem('resource', JSON.stringify(response.data))
             this.$store.commit('setResource', response.data)
-          }).catch((error) => {
-            this.$swal({
-              text: (error.response.data) ? error.response.data : '服务器出错',
-              type: 'error',
-            })
-          })
 
-          // 获取建筑清单并赋值
-          this.axios.get('building/list').then((response) => {
-            localStorage.setItem('building', JSON.stringify(response.data.building))
-            localStorage.setItem('buildingList', JSON.stringify(response.data.list))
-            this.$store.commit('setBuildingList', response.data)
-          }).catch((error) => {
-            this.$swal({
-              text: (error.response.data) ? error.response.data : '服务器出错',
-              type: 'error',
+            // 获取建筑清单并赋值
+            this.axios.get('building/list').then((response) => {
+              localStorage.setItem('building', JSON.stringify(response.data.building))
+              localStorage.setItem('buildingList', JSON.stringify(response.data.list))
+              this.$store.commit('setBuildingList', response.data)
+            }).catch((error) => {
+              this.$swal({
+                text: (error.response.data) ? error.response.data : '服务器出错',
+                type: 'error',
+              })
             })
-          })
 
-          this.axios.get('building/schedule').then((response) => {
-            this.$store.commit('setSchedules', response.data)
-          }).catch((error) => {
+            this.axios.get('building/schedule').then((response) => {
+              this.$store.commit('setSchedules', response.data)
+            }).catch((error) => {
+              this.$swal({
+                text: (error.response.data) ? error.response.data : '服务器出错',
+                type: 'error',
+              })
+            })
+          } else {
             this.$swal({
-              text: (error.response.data) ? error.response.data : '服务器出错',
+              text: response[1],
               type: 'error',
             })
+          }
+        }).catch((error) => {
+          this.$swal({
+            text: (error.response.data) ? error.response.data : '服务器出错',
+            type: 'error',
           })
-        }
+        })
       },
       destroy: function (data) {
         if (this.actionNumber < 1) {
@@ -143,15 +156,52 @@
           })
           return false
         }
+        if (!data) {
+          this.$swal({
+            text: '程序的生命中，缺少了永恒般的基因（这却不是你的错误）。',
+            type: 'error',
+          })
+          return false
+        }
         data.type = this.activeType
         data.number = this.actionNumber
-        // 假装成功发送拆除请求
-        console.info(data)
-      },
-      saveProgress: function () {
-        // TODO: 进程完成
-        // （避免时间存在偏差带来的额外 HTTP 开销）本地修改数据即可
-        // this.$store.commit('increment')
+        // 发送拆除请求
+        this.axios.post('building/destroy', data).then((response) => {
+          if (response[0] === 'success') {
+            // 获取建筑清单并赋值
+            this.axios.get('building/list').then((response) => {
+              localStorage.setItem('building', JSON.stringify(response.data.building))
+              localStorage.setItem('buildingList', JSON.stringify(response.data.list))
+              this.$store.commit('setBuildingList', response.data)
+            }).catch((error) => {
+              this.$swal({
+                text: (error.response.data) ? error.response.data : '服务器出错',
+                type: 'error',
+              })
+            })
+
+            // 请求当前领地的资源
+            this.axios.get('user/get-resource').then((response) => {
+              localStorage.setItem('resource', JSON.stringify(response.data))
+              this.$store.commit('setResource', response.data)
+            }).catch((error) => {
+              this.$swal({
+                text: (error.response.data) ? error.response.data : '服务器出错',
+                type: 'error',
+              })
+            })
+          } else {
+            this.$swal({
+              text: response[1],
+              type: 'error',
+            })
+          }
+        }).catch((error) => {
+          this.$swal({
+            text: (error.response.data) ? error.response.data : '服务器出错',
+            type: 'error',
+          })
+        })
       },
       typeTrans: function (type) {
         let typeTrans = {
