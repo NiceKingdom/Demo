@@ -18,27 +18,30 @@ Route::get('/', function () {
 // 通用
 Route::get ('/index', 'Common\UserController@getStatus');
 Route::post('/register', 'Common\UserController@register');
-Route::post('/login', 'Common\UserController@login')->middleware('resource.auto');
 Route::get ('/logout', 'Common\UserController@logout');
 
+Route::middleware(['resource.auto', 'building.check'])->group(function () {
+// 用户
+    Route::post('/login', 'Common\UserController@login')->middleware('resource.auto');
+
 // 领地
-Route::get ('/user/get-resource', 'Common\ResourceController@getMeResource')->middleware('resource.auto');
-Route::post('/lord/policy/history', 'Common\ResourceController@getPolicyHistory')->middleware('resource.auto');
-Route::post('/lord/policy/enlisting/open', 'Common\ResourceController@openEnlisting')->middleware('resource.auto');
-Route::get ('/lord/policy/enlisting/stop/{x}/{y}', 'Common\ResourceController@stopEnlisting')->middleware('resource.auto');
-Route::get ('/lord/policy/enlisting/know/{x}/{y}', 'Common\ResourceController@knowEnlisting')->middleware('resource.auto');
-Route::post('/lord/policy/deported/open', 'Common\ResourceController@openDeported')->middleware('resource.auto');
-Route::get ('/lord/policy/deported/stop/{x}/{y}', 'Common\ResourceController@stopDeported')->middleware('resource.auto');
-Route::get ('/lord/policy/deported/know/{x}/{y}', 'Common\ResourceController@knowDeported')->middleware('resource.auto');
+    Route::get ('/user/get-resource', 'Common\ResourceController@getMeResource');
+    Route::post('/lord/policy/history', 'Common\ResourceController@getPolicyHistory');
+    Route::post('/lord/policy/enlisting/open', 'Common\ResourceController@openEnlisting');
+    Route::get ('/lord/policy/enlisting/stop/{x}/{y}', 'Common\ResourceController@stopEnlisting');
+    Route::get ('/lord/policy/enlisting/know/{x}/{y}', 'Common\ResourceController@knowEnlisting');
+    Route::post('/lord/policy/deported/open', 'Common\ResourceController@openDeported');
+    Route::get ('/lord/policy/deported/stop/{x}/{y}', 'Common\ResourceController@stopDeported');
+    Route::get ('/lord/policy/deported/know/{x}/{y}', 'Common\ResourceController@knowDeported');
 
 // 建筑
-Route::get ('/building/index', 'Building\BuildingController@index')->middleware('resource.auto');
-Route::get ('/building/list', 'Building\BuildingController@buildingList');
-Route::get ('/building/schedule', 'Building\BuildingController@schedule')->middleware('resource.auto');
-
-Route::post('/building/build', 'Building\BuildingController@build')->middleware('resource.auto');
-Route::post('/building/destroy', 'Building\BuildingController@destroy')->middleware('resource.auto');
-Route::get ('/building/recall/{name}', 'Building\BuildingController@recall')->middleware('resource.auto');
+    Route::get ('/building/index', 'Building\BuildingController@index');
+    Route::get ('/building/schedule', 'Building\BuildingController@schedule');
+    Route::post('/building/build', 'Building\BuildingController@build');
+    Route::post('/building/destroy', 'Building\BuildingController@destroy');
+    Route::get ('/building/recall/{name}', 'Building\BuildingController@recall');
+    Route::get ('/building/list', 'Building\BuildingController@buildingList');
+});
 
 // 初始化
 Route::get ('/reset/redis', 'Common\InitializeController@resetRedis');

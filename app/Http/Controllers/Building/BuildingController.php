@@ -102,13 +102,6 @@ class BuildingController extends Controller
      */
     public function schedule()
     {
-        foreach ($this->buildingService->schedules as $key => $item) {
-            if ($item->action && $item->endTime <= time()) {
-                $result = $this->buildingService->build($key);
-                if ($result[0] !== 'succeed')
-                    return response($result[1], 500);
-            }
-        }
         $list = $this->buildingService->schedules;
 
         return $list;
@@ -178,6 +171,6 @@ class BuildingController extends Controller
      */
     public function destroy(BuildingPost $post)
     {
-        return $this->buildingService->destroy($post->type, $post->level, $post->number);
+        return $this->buildingService->destroyBefore($post->type, $post->level, $post->number);
     }
 }

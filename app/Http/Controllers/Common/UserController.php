@@ -180,7 +180,13 @@ class UserController extends Controller
     public function login(Request $request)
     {
         $this->getAirQuality();
-        if (Auth::check() || Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
+        // 若存在登录状态，则先注销
+        if (Auth::check()) {
+            Auth::logout();
+            Session::flush();
+        }
+
+        if (Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
             $this->logService::signUpOrIn('登录成功', 101);
 
             $this->userService->checkRedis();

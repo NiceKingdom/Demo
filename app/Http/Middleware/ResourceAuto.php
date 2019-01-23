@@ -40,7 +40,7 @@ class ResourceAuto
      * 资源计算并自增
      * 当前的数值 = 更新前的数值 * 增长率 ^ 时间间隔
      *
-     * @return bool
+     * @return bool|void
      * @throws \Exception
      */
     protected function resourceUpdate()

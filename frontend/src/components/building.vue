@@ -45,6 +45,7 @@
             </div>
           </div>
           <div class="links-wrapper">
+            <button class="link" @click="population">政策</button>
             <button class="link" @click="jump('building')">建筑</button>
             <button class="link" @click="jump('plat')">地图</button>
             <button class="link" @click="jump('#')">军事</button>
@@ -82,57 +83,70 @@
           })
           return false
         }
+        if (!data) {
+          this.$swal({
+            text: '程序的生命中，缺少了永恒般的基因（这却不是你的错误）。',
+            type: 'error',
+          })
+          return false
+        }
         data.type = this.activeType
         data.number = this.actionNumber
-        if (data) {
-          this.axios.post('building/build', data).then((response) => {
-            let type = 'success'
-            if (response.data[0] === 'failed') {
-              type = 'error'
-            }
-            this.$swal({
-              text: response.data[1],
-              type: type,
-            })
-          }).catch((error) => {
-            this.$swal({
-              text: (error.response.data) ? error.response.data : '服务器出错',
-              type: 'error',
-            })
+        // 发送建筑请求
+        this.axios.post('building/build', data).then((response) => {
+          let type = 'success'
+          if (response.data[0] === 'failed') {
+            type = 'error'
+          }
+          this.$swal({
+            text: response.data[1],
+            type: type,
           })
+        }).catch((error) => {
+          this.$swal({
+            text: (error.response.data) ? error.response.data : '服务器出错',
+            type: 'error',
+          })
+        })
 
-          // 请求当前领地的资源
-          this.axios.get('user/get-resource').then((response) => {
+        // 请求当前领地的资源
+        this.axios.get('user/get-resource').then((response) => {
+          if (response.data[0] === 'succeed') {
             localStorage.setItem('resource', JSON.stringify(response.data))
             this.$store.commit('setResource', response.data)
-          }).catch((error) => {
-            this.$swal({
-              text: (error.response.data) ? error.response.data : '服务器出错',
-              type: 'error',
-            })
-          })
 
-          // 获取建筑清单并赋值
-          this.axios.get('building/list').then((response) => {
-            localStorage.setItem('building', JSON.stringify(response.data.building))
-            localStorage.setItem('buildingList', JSON.stringify(response.data.list))
-            this.$store.commit('setBuildingList', response.data)
-          }).catch((error) => {
-            this.$swal({
-              text: (error.response.data) ? error.response.data : '服务器出错',
-              type: 'error',
+            // 获取建筑清单并赋值
+            this.axios.get('building/list').then((response) => {
+              localStorage.setItem('building', JSON.stringify(response.data.building))
+              localStorage.setItem('buildingList', JSON.stringify(response.data.list))
+              this.$store.commit('setBuildingList', response.data)
+            }).catch((error) => {
+              this.$swal({
+                text: (error.response.data) ? error.response.data : '服务器出错',
+                type: 'error',
+              })
             })
-          })
 
-          this.axios.get('building/schedule').then((response) => {
-            this.$store.commit('setSchedules', response.data)
-          }).catch((error) => {
+            this.axios.get('building/schedule').then((response) => {
+              this.$store.commit('setSchedules', response.data)
+            }).catch((error) => {
+              this.$swal({
+                text: (error.response.data) ? error.response.data : '服务器出错',
+                type: 'error',
+              })
+            })
+          } else {
             this.$swal({
-              text: (error.response.data) ? error.response.data : '服务器出错',
+              text: response.data[1],
               type: 'error',
             })
+          }
+        }).catch((error) => {
+          this.$swal({
+            text: (error.response.data) ? error.response.data : '服务器出错',
+            type: 'error',
           })
-        }
+        })
       },
       destroy: function (data) {
         if (this.actionNumber < 1) {
@@ -142,15 +156,54 @@
           })
           return false
         }
+        if (!data) {
+          this.$swal({
+            text: '程序的生命中，缺少了永恒般的基因（这却不是你的错误）。',
+            type: 'error',
+          })
+          return false
+        }
         data.type = this.activeType
         data.number = this.actionNumber
-        // 假装成功发送拆除请求
-        console.info(data)
-      },
-      saveProgress: function () {
-        // TODO: 进程完成
-        // （避免时间存在偏差带来的额外 HTTP 开销）本地修改数据即可
-        // this.$store.commit('increment')
+        // 发送拆除请求
+        this.axios.post('building/destroy', data).then((response) => {
+          if (response.data[0] === 'succeed') {
+            this.$swal({
+              text: response.data[1],
+              type: 'success',
+            })
+            // 获取用户数据并赋值
+            this.axios.get('building/index').then((response) => {
+              localStorage.setItem('building', JSON.stringify(response.data.building))
+              localStorage.setItem('buildingList', JSON.stringify(response.data.list))
+              this.$store.commit('setBuildingList', {
+                'building': response.data.building,
+                'list': response.data.list,
+              })
+              this.$store.commit('setResource', response.data.resource)
+              this.$store.commit('setSchedules', response.data.schedule)
+            }).catch((error) => {
+              if (error.response.data.message === 'Unauthenticated.') {
+                localStorage.clear()
+                window.location.reload()
+              }
+              this.$swal({
+                text: (error.response.data) ? error.response.data : '服务器出错',
+                type: 'error',
+              })
+            })
+          } else {
+            this.$swal({
+              text: response.data[1],
+              type: 'error',
+            })
+          }
+        }).catch((error) => {
+          this.$swal({
+            text: (error.response.data) ? error.response.data : '服务器出错',
+            type: 'error',
+          })
+        })
       },
       typeTrans: function (type) {
         let typeTrans = {
@@ -158,6 +211,180 @@
           sawmill: '伐木',
         }
         return typeTrans[type]
+      },
+
+      // 【政策弹窗】
+      population: function () {
+        const populationSwal = this.$swal.mixin({
+          confirmButtonClass: 'sBtn',
+          cancelButtonClass: 'sBtn',
+          buttonsStyling: true,
+          footer: '<button @click="test" class="sBtn">近期政令历史</button>',
+          onBeforeOpen: () => {
+            // 设置footer的样式
+            let cancelBtn = document.getElementsByClassName('sBtn')[1]
+            cancelBtn.setAttribute('style', 'background:#3085d6')
+            // 设置cancelButton的样式
+            let pastBtn = document.getElementsByClassName('sBtn')[2]
+            pastBtn.setAttribute('style', 'background:white;border:none;color:#3085d6;font-size:16px')
+
+            // 为footer绑定点击事件
+            pastBtn.addEventListener('click', () => {
+              this.axios.post('lord/policy/history',
+                {
+                  page: 2,
+                  size: 6,
+                  x: this.capitalX,
+                  y: this.capitalY
+                }).then((response) => {
+                  let history = ''
+                  for (let i = 0; i < response.data.length; i++) {
+                    history += response.data[i].created_at + response.data[i].info + '<hr />'
+                  }
+                populationSwal({
+                  title: '近期政令历史',
+                  html: history,
+                  showConfirmButton: false,
+                })
+                }
+              ).then((result) => {
+                console.info(result)
+              }).catch((error) => {
+                console.info(error)
+                this.$swal({
+                  text: (error.response.data) ? error.response.data : '服务器出错',
+                  type: 'error',
+                })
+              })
+            })
+          }
+        })
+
+        // 动作完成后弹出提示窗口时调用的函数，interval为间隔时间，type为操作的类型：居民驱逐 || 流民招募。
+        function completeFunction (interval, type) {
+            setTimeout(function () {
+              completePop({
+              title: type + '已结束',
+              text: '可在“近期政令历史”中查看结果',
+              type: 'success',
+              showCancelButton: false
+            })
+          }, interval)
+        }
+        // 动作完成后的提示窗口
+        const completePop = this.$swal.mixin({
+          buttonsStyling: true,
+        })
+
+        // 流民招募 & 居民驱逐
+        populationSwal({
+          title: '政策与指令',
+          showCancelButton: true,
+          confirmButtonText: '流民招募启事',
+          cancelButtonText: '居民驱逐通告',
+          footer: '<button @click="test" class="sBtn">近期政令历史</button>',
+        }).then((result) => {
+          // 流民招募
+          if (result.value) {
+            this.axios.post('lord/policy/enlisting/open', {
+              x: this.capitalX,
+              y: this.capitalY
+            }).then((response) => {
+              console.info(response.data)
+              this.$swal({
+                title: '招募启事已发布',
+                text: '请稍后到“近期政令历史”中查看结果',
+                type: 'success'
+              })
+
+              // 招募结束提示窗口
+              let nowTime = this.nowTime()
+              let interval = (response.data - nowTime) * 1000
+              let type = '流民招募'
+              // 设定完成的提示窗口，传参数interval和type。
+              completeFunction(interval, type)
+            }).catch((error) => {
+              this.$swal({
+                text: (error.response.data) ? error.response.data : '服务器出错',
+                type: 'error',
+              })
+            })
+            // 居民驱逐
+          } else if (
+            result.dismiss === this.$swal.DismissReason.cancel
+          ) {
+            populationSwal({
+              title: '驱逐居民数',
+              type: 'info',
+              html: '<div>预计驱逐  ' +
+                '<input type="number" min="1" onkeyup="this.value=this.value.replace(/\\D/g,\'\')" class="leave"/>' +
+                '  人</div>',
+              showCancelButton: true,
+              showCloseButton: true,
+              confirmButtonText: '支付金钱',
+              cancelButtonText: '支付粮食',
+            }).then((resultNext) => {
+              // 若点击确定，则发送驱逐请求
+              let inputValue = document.getElementsByClassName('leave')[0].value
+              if (resultNext.value) {
+                this.axios.post('lord/policy/deported/open', {
+                  x: this.capitalX,
+                  y: this.capitalY,
+                  costType: 1,
+                  number: inputValue
+                }).then((response) => {
+                  this.$swal({
+                    title: '驱逐通告已发布',
+                    text: '请稍后到“近期政令历史”中查看结果',
+                    type: 'success'
+                  })
+
+                  // 驱逐结束提示窗口
+                  let nowTime = this.nowTime()
+                  let interval = (response.data - nowTime) * 1000
+                  let type = '居民驱逐'
+                  // 设定完成的提示窗口，传参数interval和type。
+                  completeFunction(interval, type)
+                }).catch((error) => {
+                    console.info(error)
+                    this.$swal({
+                      text: (error.response.data) ? error.response.data : '服务器出错',
+                      type: 'error',
+                    })
+                  })
+              } else if (
+                resultNext.dismiss === this.$swal.DismissReason.cancel
+              ) {
+                this.axios.post('lord/policy/deported/open', {
+                  x: this.capitalX,
+                  y: this.capitalY,
+                  costType: 2,
+                  number: inputValue
+                }).then((response) => {
+                  console.info(response)
+                  this.$swal({
+                    title: '驱逐通告已发布',
+                    text: '请稍后到“近期政令历史”中查看结果',
+                    type: 'success'
+                  })
+
+                  // 驱逐结束提示窗口
+                  let nowTime = this.nowTime()
+                  let interval = (response.data - nowTime) * 1000
+                  let type = '居民驱逐'
+                  // 设定完成的提示窗口，传参数interval和type。
+                  completeFunction(interval, type)
+                }).catch((error) => {
+                  console.info(error)
+                  this.$swal({
+                    text: (error.response.data) ? error.response.data : '服务器出错',
+                    type: 'error',
+                  })
+                })
+              }
+            })
+          }
+        })
       },
     },
     computed: {
@@ -298,5 +525,17 @@
     padding-left: 6px;
     color: #555555;
     outline: none;
+  }
+</style>
+
+<style>
+  .leave {
+    border: 1px solid lightblue;
+    border-radius: 10px;
+    min-width: 20px;
+    min-height: 25px;
+    font-size: 18px;
+    color: #3085d6;
+    padding-left: 10px;
   }
 </style>
