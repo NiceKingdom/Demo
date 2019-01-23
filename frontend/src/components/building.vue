@@ -19,7 +19,7 @@
               <div class="building">
                 <p>
                   <span>建筑清单：</span>
-                  <span style="padding: 2px; margin: 2px; color: #636363; border: 1px solid black;"
+                  <span class="button farm-wood"
                         v-for="type in buildType"
                         @click="toggle(type)"
                         :key="type">{{typeTrans(type)}}</span>
@@ -510,6 +510,22 @@
 
 <style scoped lang="scss">
   @import "../assets/scss/global_css";
+  .farm-wood {
+    height: 30px;
+    width: 50px;
+    margin: 0 5px;
+    align-content: center;
+    font-size: 15px;
+    background: #6d7973;
+  }
+  #number {
+    height: 20px;
+    border: 1px solid #c3c3c3;
+    border-radius: 10px;
+    padding-left: 6px;
+    color: #555555;
+    outline: none;
+  }
 </style>
 
 <style>
