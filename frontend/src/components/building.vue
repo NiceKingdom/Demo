@@ -111,7 +111,7 @@
 
         // 请求当前领地的资源
         this.axios.get('user/get-resource').then((response) => {
-          if (response[0] === 'success') {
+          if (response.data[0] === 'succeed') {
             localStorage.setItem('resource', JSON.stringify(response.data))
             this.$store.commit('setResource', response.data)
 
@@ -137,7 +137,7 @@
             })
           } else {
             this.$swal({
-              text: response[1],
+              text: response.data[1],
               type: 'error',
             })
           }
@@ -167,24 +167,26 @@
         data.number = this.actionNumber
         // 发送拆除请求
         this.axios.post('building/destroy', data).then((response) => {
-          if (response[0] === 'success') {
-            // 获取建筑清单并赋值
-            this.axios.get('building/list').then((response) => {
+          if (response.data[0] === 'succeed') {
+            this.$swal({
+              text: response.data[1],
+              type: 'success',
+            })
+            // 获取用户数据并赋值
+            this.axios.get('building/index').then((response) => {
               localStorage.setItem('building', JSON.stringify(response.data.building))
               localStorage.setItem('buildingList', JSON.stringify(response.data.list))
-              this.$store.commit('setBuildingList', response.data)
-            }).catch((error) => {
-              this.$swal({
-                text: (error.response.data) ? error.response.data : '服务器出错',
-                type: 'error',
+              this.$store.commit('setBuildingList', {
+                'building': response.data.building,
+                'list': response.data.list,
               })
-            })
-
-            // 请求当前领地的资源
-            this.axios.get('user/get-resource').then((response) => {
-              localStorage.setItem('resource', JSON.stringify(response.data))
-              this.$store.commit('setResource', response.data)
+              this.$store.commit('setResource', response.data.resource)
+              this.$store.commit('setSchedules', response.data.schedule)
             }).catch((error) => {
+              if (error.response.data.message === 'Unauthenticated.') {
+                localStorage.clear()
+                window.location.reload()
+              }
               this.$swal({
                 text: (error.response.data) ? error.response.data : '服务器出错',
                 type: 'error',
@@ -192,7 +194,7 @@
             })
           } else {
             this.$swal({
-              text: response[1],
+              text: response.data[1],
               type: 'error',
             })
           }
@@ -228,17 +230,32 @@
 
             // 为footer绑定点击事件
             pastBtn.addEventListener('click', () => {
-              console.log('近期政令历史被点击了')
-              this.axios.get('lord/policy/enlisting/know/' + this.capitalX + '/' + this.capitalY).then((response) => this.$swal({
-                title: '政令历史',
-                text: response.data,
-              })).catch((error) => {
-                  console.info(error)
-                  this.$swal({
-                    text: (error.response.data) ? error.response.data : '服务器出错',
-                    type: 'error',
-                  })
+              this.axios.post('lord/policy/history',
+                {
+                  page: 2,
+                  size: 6,
+                  x: this.capitalX,
+                  y: this.capitalY
+                }).then((response) => {
+                  let history = ''
+                  for (let i = 0; i < response.data.length; i++) {
+                    history += response.data[i].created_at + response.data[i].info + '<hr />'
+                  }
+                populationSwal({
+                  title: '近期政令历史',
+                  html: history,
+                  showConfirmButton: false,
                 })
+                }
+              ).then((result) => {
+                console.info(result)
+              }).catch((error) => {
+                console.info(error)
+                this.$swal({
+                  text: (error.response.data) ? error.response.data : '服务器出错',
+                  type: 'error',
+                })
+              })
             })
           }
         })
