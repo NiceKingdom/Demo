@@ -47,7 +47,7 @@ class ResourceAuto
     {
         $resource = Resource::where('userId', Auth::id())->first();
 
-        $time = $_SERVER['REQUEST_TIME'];
+        $time = nowTime();
 
         // 定义系统数据
         $time = ($time - strtotime($resource->updated_at)) / 3600;
@@ -70,7 +70,11 @@ class ResourceAuto
 
         // 计算平均效率
         if ($workerNeed) {
-            $workRate = $resource->people / $workerNeed;
+            if ($resource->people >= $workerNeed) {
+                $workRate = 1;
+            } else {
+                $workRate = $resource->people / $workerNeed;
+            }
         } else {
             $workRate = 0;
         }
@@ -96,12 +100,16 @@ class ResourceAuto
         $resource->foodChip = $interim[1];
 
         // 人口自增
-        if ($workerNeed * 2 > $resource->people) {
+        if ($workerNeed * 10 > $resource->people) {
             // 0.12% 为临时的每秒人口增长率
             $peopleAdd = $resource->people * pow(0.0006, $time);
             $interim = exploreTwo($peopleAdd + $resource->peopleChip);
             $resource->people += $interim[0];
             $resource->peopleChip = $interim[1];
+
+            if ($resource->people > $workerNeed * 11) {
+                $resource->people = $workerNeed * 8;
+            }
         }
 
         // 计算粮食消耗
@@ -115,6 +123,7 @@ class ResourceAuto
             $resource->food -= $interim[0];
             $resource->foodChip -= ($interim[1] > $resource->foodChip) ? 0 : $interim[1];
         } else {
+            $resource->food -= $resource->people * $time * 10.8;
             $resource->people = floor($resource->foodOutput / 0.1 * 0.99);
         }
 

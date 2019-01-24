@@ -119,7 +119,7 @@ class BuildingService
             return ['failed', '施工队都在忙碌'];
         }
 
-        $startTime = time();
+        $startTime = nowTime();
         // 计算结束时间
         $item = $this->getBuildingList();
         $item = $item[$type][$level - 1];
@@ -266,7 +266,7 @@ class BuildingService
         if (!$schedule = $this->getSleep()) {
             return ['failed', '无可用施工队'];
         }
-        $startTime = time();
+        $startTime = nowTime();
         $item = $this->getBuildingList();
         $item = $item[$type][$level - 1];
         $endTime = $startTime + $item['time'] * $number;

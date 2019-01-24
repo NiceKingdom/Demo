@@ -28,8 +28,8 @@ class Policy extends Model
         'end' => 2,
     ];
     public const POLICIES_TRANS = [
-        1 => '流民招募启示',
-        2 => '居民驱逐通告',
+        1 => ['name' => '流民招募启示', 'action' => 'knowEnlisting'],
+        2 => ['name' => '居民驱逐通告', 'action' => 'knowDeported'],
     ];
     public const POLICIES_ENLISTING = [
         'id' => 1,
@@ -99,7 +99,7 @@ class Policy extends Model
             if ($policy->delete()) {
                 $result = UserHistory::add(
                     $x, $y, Auth::id(),
-                    '政策“' . self::POLICIES_TRANS[$policy->policiesKey] . '”被废止。',
+                    '政策“' . self::POLICIES_TRANS[$policy->policiesKey]['name'] . '”被废止。',
                     UserHistory::CATEGORY['policy']
                 );
                 if ($result) return $result;
@@ -132,7 +132,7 @@ class Policy extends Model
         $model->status = self::STATUS['doing'];
         $model->userId = $userId;
         $model->policiesKey = $key;
-        $model->title = self::POLICIES_TRANS[$key];
+        $model->title = self::POLICIES_TRANS[$key]['name'];
         if ($endTime) {
             $model->endTime = $endTime;
         }
@@ -143,7 +143,7 @@ class Policy extends Model
         if ($model->save()) {
             $result = UserHistory::add(
                 $x, $y, $userId,
-                '政策“' . self::POLICIES_TRANS[$model->policiesKey] . '”启动。',
+                '政策“' . self::POLICIES_TRANS[$model->policiesKey]['name'] . '”启动。',
                 UserHistory::CATEGORY['policy']
             );
 

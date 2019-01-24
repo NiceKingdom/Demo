@@ -20,7 +20,7 @@ Route::get ('/index', 'Common\UserController@getStatus');
 Route::post('/register', 'Common\UserController@register');
 Route::get ('/logout', 'Common\UserController@logout');
 
-Route::middleware(['resource.auto', 'building.check'])->group(function () {
+Route::middleware(['resource.auto', 'check'])->group(function () {
 // 用户
     Route::post('/login', 'Common\UserController@login')->middleware('resource.auto');
 
@@ -29,10 +29,8 @@ Route::middleware(['resource.auto', 'building.check'])->group(function () {
     Route::post('/lord/policy/history', 'Common\ResourceController@getPolicyHistory');
     Route::post('/lord/policy/enlisting/open', 'Common\ResourceController@openEnlisting');
     Route::get ('/lord/policy/enlisting/stop/{x}/{y}', 'Common\ResourceController@stopEnlisting');
-    Route::get ('/lord/policy/enlisting/know/{x}/{y}', 'Common\ResourceController@knowEnlisting');
     Route::post('/lord/policy/deported/open', 'Common\ResourceController@openDeported');
     Route::get ('/lord/policy/deported/stop/{x}/{y}', 'Common\ResourceController@stopDeported');
-    Route::get ('/lord/policy/deported/know/{x}/{y}', 'Common\ResourceController@knowDeported');
 
 // 建筑
     Route::get ('/building/index', 'Building\BuildingController@index');
