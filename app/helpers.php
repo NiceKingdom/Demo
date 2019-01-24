@@ -108,3 +108,17 @@ if (!function_exists('getBuildList')) {
         return $list;
     }
 }
+
+    /**
+     * 获取建筑清单，出错则记录日志
+     *
+     * @return int
+     */
+    function nowTime()
+    {
+        if (env('APP_ENV') === 'prod') {
+            return $_SERVER['REQUEST_TIME'];
+        }
+
+        return env('NOW_TIME') ?: $_SERVER['REQUEST_TIME'];
+    }

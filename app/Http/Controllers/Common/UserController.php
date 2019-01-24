@@ -44,7 +44,7 @@ class UserController extends Controller
      */
     public function getStatus()
     {
-        return ['isLogin' => Auth::check(), 'time' => time()];
+        return ['isLogin' => Auth::check(), 'time' => nowTime()];
     }
 
     /**

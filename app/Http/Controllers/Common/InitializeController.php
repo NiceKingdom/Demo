@@ -14,7 +14,7 @@ class InitializeController extends Controller
     {
         $this->resetRedis();
 
-        if (!Redis::set('timeGame', $this->getInitTime()) || !Redis::set('timeTruth', time()))
+        if (!Redis::set('timeGame', $this->getInitTime()) || !Redis::set('timeTruth', nowTime()))
             return response('任务失败，执行至 V82H7B 阶段。', 500);
 
         return response('任务执行成功', 200);

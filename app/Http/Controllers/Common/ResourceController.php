@@ -56,15 +56,15 @@ class ResourceController extends Controller
 
     /**
      * showdoc
-     * @catalog 前后端接口/政策
+     * @catalog 前后端接口/领地
      * @title [获取]政策历史
      * @description -
      * @method post
      * @url https://{url}/lord/policy/history
-     * @param page 必选 int 当前页数，从1开始
-     * @param size 必选 int 单页历史数量
      * @param x 必选 int X坐标
      * @param y 必选 int Y坐标
+     * @param page 可选 int 当前页数，默认为1
+     * @param size 可选 int 单页信息量，默认为10
      * @return [{"id":2,"info":"\u653f\u7b56\u201c\u5c45\u6c11\u9a71\u9010\u901a\u544a\u201d\u7ed3\u675f\u4e86\uff0c\u6211\u4eec\u72e0\u5fc3\u5730\u9a71\u9010\u4e861\u4f4d\u5c45\u6c11\u3002","created_at":"2019-01-15 02:30:06"},{"id":3,"info":"\u653f\u7b56\u201c\u5c45\u6c11\u9a71\u9010\u901a\u544a\u201d\u542f\u52a8\u3002","created_at":"2019-01-15 02:30:06"},{"id":4,"info":"\u653f\u7b56\u201c\u5c45\u6c11\u9a71\u9010\u901a\u544a\u201d\u7ed3\u675f\u4e86\uff0c\u6211\u4eec\u72e0\u5fc3\u5730\u9a71\u9010\u4e861\u4f4d\u5c45\u6c11\u3002","created_at":"2019-01-15 02:30:10"}]
      * @return_param id int 事件ID
      * @return_param info int 简述
@@ -73,8 +73,8 @@ class ResourceController extends Controller
      */
     public function getPolicyHistory(Request $request)
     {
-        $page = (int)$request['page'];
-        $size = (int)$request['size'];
+        $page = intval($request['page'] ?? 1);
+        $size = intval($request['size'] ?? 10);
         $x = (int)$request['x'];
         $y = (int)$request['y'];
         if ($page < 1 || $size < 1 || !$x || !$y) {
@@ -83,7 +83,12 @@ class ResourceController extends Controller
         $page -= 1;
 
         return UserHistory::select('id', 'info', 'created_at')
-            ->where(['x' => $x, 'y' => $y, 'userId' => Auth::id(), 'category' => UserHistory::CATEGORY['policy']])
+            ->where([
+                ['x', '=', $x],
+                ['y', '=', $y],
+                ['userId', '=', Auth::id()],
+                ['category', '=', UserHistory::CATEGORY['policy']],
+            ])
             ->offset($page * $size)
             ->limit($size)
             ->get();
@@ -115,7 +120,7 @@ class ResourceController extends Controller
             $coordinate = explode(',', Auth::user()->capital);
             $policy = Policy::where(['x' => $coordinate[0], 'y' => $coordinate[1], 'policiesKey' => Policy::POLICIES_ENLISTING['id'], 'status' => Policy::STATUS['doing']])->first();
             if ($policy) {
-                $endInfo = '政策“' . Policy::POLICIES_TRANS[2] . '”结束了，我们狠心地驱逐了' . $policy->tips . '位居民。';
+                $endInfo = '政策“' . Policy::POLICIES_TRANS[2]['name'] . '”结束了，我们狠心地驱逐了' . $policy->tips . '位居民。';
                 $check = (new Policy())->getStatus(Policy::POLICIES_DEPORTED['id'], Auth::id(), $coordinate[0], $coordinate[1], $endInfo);
                 if (is_numeric($check)) {
                     return '政策实施中，请勿重复施政';
@@ -145,62 +150,6 @@ class ResourceController extends Controller
     /**
      * showdoc
      * @catalog 前后端接口/领地
-     * @title [动作]流民招募启示的进度
-     * @description -
-     * @method get
-     * @url https://{url}/lord/policy/enlisting/know/{x}/{y}
-     * @param x 必选 int X坐标
-     * @param y 必选 int Y坐标
-     * @return 1546777084
-     * @return_param id int 资源ID
-     * @return_param created_at int 创建时间
-     * @return_param updated_at int 更新时间
-     * @number 50
-     */
-    public function knowEnlisting(int $x, int $y)
-    {
-        // 启动政策
-        $coordinate = explode(',', Auth::user()->capital);
-        $percent = rand(1, 100);
-        // 10% 1-2; 60% 3-6; 30% 7-10; sum: 21.3
-        if ($percent < 10) {
-            $endResult = rand(1, 2);
-        } elseif ($percent < 70) {
-            $endResult = rand(3, 6);
-        } else {
-            $endResult = rand(7, 10);
-        }
-        $endInfo = '政策“' . Policy::POLICIES_TRANS[1] . '”已结束，有' . $endResult . '位流浪人投靠我们。';
-
-        DB::beginTransaction();
-        try {
-            $result = (new Policy())->getStatus(Policy::POLICIES_ENLISTING['id'], Auth::id(), $coordinate[0], $coordinate[1], $endInfo);
-
-            if (is_array($result) && $result['status'] !== 200) {
-                DB::rollBack();
-                return response($result['info'], $result['status']);
-            }
-
-            // 增加资源
-            if (!is_array($result) && $result === $endInfo) {
-                $resource = Resource::where('userId', Auth::id())->first();
-                $resource->people += $endResult;
-                if (!$resource->save()) {
-                    throw new \Exception('保存新增流浪人失败');
-                }
-            }
-
-            DB::commit();
-            return $result;
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            return response($exception->getMessage(), 500);
-        }
-    }
-
-    /**
-     * showdoc
-     * @catalog 前后端接口/领地
      * @title [动作]终止流民招募启示
      * @description 直接结束招募，但不退还发执行政令的费用
      * @method get
@@ -208,9 +157,7 @@ class ResourceController extends Controller
      * @param x 必选 int X坐标
      * @param y 必选 int Y坐标
      * @return 政策已终止
-     * @return_param id int 资源ID
-     * @return_param created_at int 创建时间
-     * @return_param updated_at int 更新时间
+     * @return_param - string 提示语
      * @number 50
      */
     public function stopEnlisting(int $x, int $y)
@@ -276,7 +223,7 @@ class ResourceController extends Controller
             // 检查施政状态
             $policy = Policy::where(['x' => $coordinate[0], 'y' => $coordinate[1], 'policiesKey' => Policy::POLICIES_DEPORTED['id'], 'status' => Policy::STATUS['doing']])->first();
             if ($policy) {
-                $endInfo = '政策“' . Policy::POLICIES_TRANS[2] . '”结束了，我们狠心地驱逐了' . $policy->tips . '位居民。';
+                $endInfo = '政策“' . Policy::POLICIES_TRANS[2]['name'] . '”结束了，我们狠心地驱逐了' . $policy->tips . '位居民。';
                 $check = (new Policy())->getStatus(Policy::POLICIES_DEPORTED['id'], Auth::id(), $coordinate[0], $coordinate[1], $endInfo);
                 if (is_numeric($check)) {
                     return '政策实施中，请勿重复施政';
@@ -306,55 +253,6 @@ class ResourceController extends Controller
     /**
      * showdoc
      * @catalog 前后端接口/领地
-     * @title [动作]居民驱逐通告的进度
-     * @description -
-     * @method get
-     * @url https://{url}/lord/policy/deported/know/{x}/{y}
-     * @param x 必选 int X坐标
-     * @param y 必选 int Y坐标
-     * @return 1546777084
-     * @return_param id int 资源ID
-     * @return_param created_at int 创建时间
-     * @return_param updated_at int 更新时间
-     * @number 50
-     */
-    public function knowDeported(int $x, int $y)
-    {
-        // 检查
-        $coordinate = explode(',', Auth::user()->capital);
-        $policy = Policy::where(['x' => $coordinate[0], 'y' => $coordinate[1], 'policiesKey' => Policy::POLICIES_DEPORTED['id'], 'status' => Policy::STATUS['doing']])->first();
-        if (!$policy) {
-            return '这片土地尚未施行该政策，或该政策已失效';
-        }
-
-        $endInfo = '政策“' . Policy::POLICIES_TRANS[2] . '”结束了，我们狠心地驱逐了' . $policy->tips . '位居民。';
-        DB::beginTransaction();
-        try {
-            $result = (new Policy())->getStatus(Policy::POLICIES_DEPORTED['id'], Auth::id(), $coordinate[0], $coordinate[1], $endInfo);
-
-            if (is_array($result) && $result['status'] !== 200) {
-                DB::rollBack();
-                return response($result['info'], $result['status']);
-            }
-
-            // 增加资源
-            $resource = Resource::where('userId', Auth::id())->first();
-            $resource->people -= $policy->tips;
-            if (!$resource->save()) {
-                throw new \Exception('保存驱逐居民失败');
-            }
-
-            DB::commit();
-            return $result;
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            return response($exception->getMessage(), 500);
-        }
-    }
-
-    /**
-     * showdoc
-     * @catalog 前后端接口/领地
      * @title [动作]终止居民驱逐通告
      * @description 直接结束招募，但不退还发执行政令的费用
      * @method get
@@ -362,9 +260,7 @@ class ResourceController extends Controller
      * @param x 必选 int X坐标
      * @param y 必选 int Y坐标
      * @return 政策已终止
-     * @return_param id int 资源ID
-     * @return_param created_at int 创建时间
-     * @return_param updated_at int 更新时间
+     * @return_param - string 提示语
      * @number 50
      */
     public function stopDeported(int $x, int $y)
