@@ -36,11 +36,13 @@ export default new VueX.Store({
      * @param state
      */
     setUpdate (state) {
+      console.log('开始自增')
       let Kind = ['people', 'food', 'wood', 'stone', 'money', 'area']
       Kind.forEach(MathUpdate)
       function MathUpdate (item) {
         let resource = state.resource
         let SecOutput = resource[item].output / 3600
+        // console.log(resource[item])
         resource[item].value += Math.floor(SecOutput)
         resource[item].oddment += SecOutput - Math.floor(SecOutput)
         if (resource.people.oddment > 1) {
@@ -126,9 +128,18 @@ export default new VueX.Store({
   },
   actions: {
     update (context, interval) {
-      setInterval(() => {
-        context.commit('setUpdate')
-      }, interval)
+      let url = window.location.href.split('#/')
+      // 执行
+      if (this.beginUpdate === undefined) {
+        this.beginUpdate = setInterval(() => {
+          context.commit('setUpdate')
+        }, interval)
+      }
+      // 停止
+      if (url[1] !== 'building' && this.beginUpdate) {
+        clearInterval(this.beginUpdate)
+        this.beginUpdate = undefined
+      }
     }
   },
 })
