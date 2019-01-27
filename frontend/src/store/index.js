@@ -36,13 +36,11 @@ export default new VueX.Store({
      * @param state
      */
     setUpdate (state) {
-      console.log('开始自增')
       let Kind = ['people', 'food', 'wood', 'stone', 'money', 'area']
       Kind.forEach(MathUpdate)
       function MathUpdate (item) {
         let resource = state.resource
         let SecOutput = resource[item].output / 3600
-        // console.log(resource[item])
         resource[item].value += Math.floor(SecOutput)
         resource[item].oddment += SecOutput - Math.floor(SecOutput)
         if (resource.people.oddment > 1) {
