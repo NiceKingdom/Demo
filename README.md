@@ -26,14 +26,17 @@ npm install
 #           }
 #         },
 
-# serve with hot reload at localhost:8080 or other tips
+# Serve with hot reload at localhost:8080 or other tips
 npm run dev
 
-# build for production with minification
+# Build for production with minification
 # npm run build
 
-# build for production and view the bundle analyzer report
+# Build for production and view the bundle analyzer report
 # npm run build --report
+
+# If you want auto build & publish, run it:
+# ./sh build
 
 # Test
 # run `./vendor/bin/phpunit [testFile]`, eg. `tests/Feature/ResourcePolicyTest.php`
