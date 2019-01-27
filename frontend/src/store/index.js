@@ -126,9 +126,18 @@ export default new VueX.Store({
   },
   actions: {
     update (context, interval) {
-      setInterval(() => {
-        context.commit('setUpdate')
-      }, interval)
+      let url = window.location.href.split('#/')
+      // 执行
+      if (this.beginUpdate === undefined) {
+        this.beginUpdate = setInterval(() => {
+          context.commit('setUpdate')
+        }, interval)
+      }
+      // 停止
+      if (url[1] !== 'building' && this.beginUpdate) {
+        clearInterval(this.beginUpdate)
+        this.beginUpdate = undefined
+      }
     }
   },
 })

@@ -4,7 +4,7 @@
             <span class="flex-item" v-for="item in resource" :key="item.name">
                 <b style="color: #000;">{{item.name}}</b>：
                 <span style="color: #636363;">{{item.value}}</span>
-                (<span class="b">{{item.output}}</span>)
+                (<span title="每小时" class="b">{{item.output}}</span>)
             </span>
     </div>
   </div>
@@ -18,9 +18,6 @@
         return this.$store.state.resource
       },
     },
-    mounted () {
-      this.$store.dispatch('update', 1000)
-    }
   }
 </script>
 
