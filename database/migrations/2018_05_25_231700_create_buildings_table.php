@@ -18,6 +18,8 @@ class CreateBuildingsTable extends Migration
             $table->unsignedInteger('userId');
             $table->unsignedMediumInteger('farm01')->default(6); # 农田
             $table->unsignedMediumInteger('farm02')->default(0);
+            $table->unsignedMediumInteger('house01')->default(2); # 民居
+            $table->unsignedMediumInteger('house02')->default(0);
             $table->unsignedMediumInteger('sawmill01')->default(0); # 伐木场
             $table->unsignedMediumInteger('sawmill02')->default(0);
             $table->timestamps();

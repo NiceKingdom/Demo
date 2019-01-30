@@ -195,7 +195,7 @@ class BuildingService
             }
 
             // 删除建筑进程
-            $this->deleteSchedule($this->schedules[$scheduleKey]->id);
+            $this->deleteSchedule($this->schedules[$scheduleKey]);
             DB::commit();
             return ['succeed', '已取消该施工项目'];
         } catch (\Exception $exception) {
@@ -277,6 +277,9 @@ class BuildingService
         // 降低建筑数量
         if ($level < 10) $level = '0' . $level;
         $buildingName = $type . $level;
+        if ($building->$buildingName < $number) {
+            return ['failed', '建筑数量不足，难道我们去拆空气吗？'];
+        }
         $building->$buildingName -= $number;
 
         // 降低产出

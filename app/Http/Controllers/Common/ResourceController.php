@@ -91,6 +91,7 @@ class ResourceController extends Controller
             ])
             ->offset($page * $size)
             ->limit($size)
+            ->latest()
             ->get();
     }
 
@@ -121,7 +122,7 @@ class ResourceController extends Controller
             $policy = Policy::where(['x' => $coordinate[0], 'y' => $coordinate[1], 'policiesKey' => Policy::POLICIES_ENLISTING['id'], 'status' => Policy::STATUS['doing']])->first();
             if ($policy) {
                 $endInfo = '政策“' . Policy::POLICIES_TRANS[2]['name'] . '”结束了，我们狠心地驱逐了' . $policy->tips . '位居民。';
-                $check = (new Policy())->getStatus(Policy::POLICIES_DEPORTED['id'], Auth::id(), $coordinate[0], $coordinate[1], $endInfo);
+                $check = (new Policy())->getStatus(Policy::POLICIES_ENLISTING['id'], Auth::id(), $coordinate[0], $coordinate[1], $endInfo);
                 if (is_numeric($check)) {
                     return '政策实施中，请勿重复施政';
                 }

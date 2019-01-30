@@ -98,7 +98,7 @@ class Policy extends Model
         if (Auth::id() === $policy->userId) {
             if ($policy->delete()) {
                 $result = UserHistory::add(
-                    $x, $y, Auth::id(),
+                    Auth::id(), $x, $y,
                     '政策“' . self::POLICIES_TRANS[$policy->policiesKey]['name'] . '”被废止。',
                     UserHistory::CATEGORY['policy']
                 );
@@ -142,7 +142,7 @@ class Policy extends Model
 
         if ($model->save()) {
             $result = UserHistory::add(
-                $x, $y, $userId,
+                $userId, $x, $y,
                 '政策“' . self::POLICIES_TRANS[$model->policiesKey]['name'] . '”启动。',
                 UserHistory::CATEGORY['policy']
             );

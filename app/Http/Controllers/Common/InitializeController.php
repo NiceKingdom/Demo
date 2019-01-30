@@ -65,7 +65,7 @@ class InitializeController extends Controller
         $list = [
             'farm' => [
                 [
-                    'name' => '一级农田',
+                    'name' => '刀耕地',
                     'level' => 1,
                     'time' => 75,
                     'product' => [
@@ -78,7 +78,36 @@ class InitializeController extends Controller
                         'people' => 1,
                     ],
                 ], [
-                    'name' => '二级农田',
+                    'name' => '粗耕地',
+                    'level' => 2,
+                    'time' => 105, // upper 40%
+                    'product' => [
+                        'food' => 48, // upper 20%
+                    ],
+                    'material' => [
+                        'wood' => 13, // upper 30%
+                    ],
+                    'occupy' => [
+                        'people' => 1,
+                    ],
+                ],
+            ],
+            'house' => [
+                [
+                    'name' => '茅草屋',
+                    'level' => 1,
+                    'time' => 60,
+                    'product' => [
+                        'people' => 40,
+                    ],
+                    'material' => [
+                        'wood' => 10,
+                    ],
+                    'occupy' => [
+                        'people' => 1,
+                    ],
+                ], [
+                    'name' => '木梁茅草屋',
                     'level' => 2,
                     'time' => 105, // upper 40%
                     'product' => [
@@ -94,7 +123,7 @@ class InitializeController extends Controller
             ],
             'sawmill' => [
                 [
-                    'name' => '一级伐木营地',
+                    'name' => '伐林人',
                     'level' => 1,
                     'time' => 120,
                     'product' => [
@@ -107,7 +136,7 @@ class InitializeController extends Controller
                         'people' => 1,
                     ],
                 ], [
-                    'name' => '二级伐木营地',
+                    'name' => '盗伐工会',
                     'level' => 2,
                     'time' => 165, // upper ≈40%
                     'product' => [
