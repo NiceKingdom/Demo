@@ -3,7 +3,9 @@
     <img class="logo" src="../assets/logo.png" alt="">
     <br>
     <p class="remarks">(～￣▽￣)～ 该页面功能暂未开放，尽请期待！</p>
-    <br>
+    <button class="remarks-btn" @click="jump('manor')">点我返回首页</button>
+    <br/>
+    <br/>
     <div class="test">- - - - Example - - - -</div>
     <div class="all-father">
       <div class="item-2">2-cell</div>
@@ -12,8 +14,9 @@
       <div class="item-24">24-cell</div>
    </div>
 
-    <br>
-    <button class="orange-button" @click="test">点我改变长度</button>
+    <br/>
+    <br/>
+    <button class="orange-button" @click="test">点我改变进度条长度</button>
     <div class="progress">
       <div class="loader-container" v-bind:style="styleObject"></div>
     </div>
@@ -42,18 +45,26 @@
 <style scoped lang="scss">
   @import "../assets/scss/global_css";
   .test {
-    color: #1fa492;
+    color: orange;
   }
   .remarks {
     color: #1fa492;
     font-weight: bold;
+  }
+  .remarks-btn {
+    color: white;
+    width: 150px;
+    background: #1fa492;
+  }
+  .orange-button {
+    width: 200px;
   }
   .progress{
     width: 70%;
     height: 7px;
     border-radius:7px;
     margin-left: 15%;
-    margin-top: 20%;
+    margin-top: 10%;
     background: -webkit-linear-gradient(left,#e4e3e4,#e4e5e4);
     background: -moz-linear-gradient(left,#e4e3e4,#e4e5e4);
     background: -o-linear-gradient(left,#e4e3e4,#e4e5e4);

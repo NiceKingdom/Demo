@@ -8,12 +8,15 @@
           <div class="resource-wrapper">
             <VResourceBar />
           </div>
-          <div class="building-name" @click="jump('manor')">{{kingdom}}</div>
+          <div class="building-name" @click="jump('manor')">
+            <span class="iconfont king-crown">&#xe600;</span>
+            {{kingdom}}
+          </div>
         </div>
         <div class="building-main-wrapper">
           <div class="info-wrapper">
             <div class="left">
-              <VProgress v-for="item in schedules" :process="item" :key="item.id" />
+              <VProgress v-for="item in schedules" :process="item" :key="item.id"/>
             </div>
             <div class="right">
               <div class="building">
@@ -27,8 +30,8 @@
                 <label for="number">数量</label>
                 <input type="number" id="number" v-model="actionNumber" class="btn-number">
 
-                <table>
-                  <tr>
+                <table class="building-list">
+                  <tr class="building-list-content">
                     <th width="120">名称</th>
                     <th>拥有</th>
                     <th>时间</th>
@@ -205,6 +208,7 @@
           })
         })
       },
+
       typeTrans: function (type) {
         let typeTrans = {
           farm: '农场',
@@ -463,16 +467,11 @@
     min-height: 87.88vh
     width: 100%
     .building-header
-      padding: 2rem 3rem
+      padding: 3rem 3rem
       text-align: left
-      /*display: flex
-      align-items: center
-      justify-content: space-between*/
       .logo-wrapper
         display: inline-block
-        width: 300px
-        height: 60px
-        line-height: 60px
+        width: 350px
         text-align: left
         vertical-align: middle
         .logo
@@ -480,17 +479,19 @@
           height: auto
       .resource-wrapper
         display: inline-block
-        margin: 0 1rem
-        width: 40%
+        margin-left: 5vw
+        width: 40vw
         vertical-align: middle
       .building-name
         display: inline-block
-        margin-left: 2rem
-        height: 60px
-        line-height: 60px
-        font-size: 2rem
-        text-align: left
+        width 20vw
+        font-size: 3rem
+        text-align: center
         vertical-align: middle
+        .king-crown
+          margin-right -0.3vw
+          font-size 2.8rem
+          color #004554
     .building-main-wrapper
       width: 100%
       .info-wrapper
@@ -498,18 +499,26 @@
         justify-content: center
         padding: 2rem
         .left
+          width: 25vw
           padding: 5px
           display: inline-block
-          margin-right: 1.2rem
-          border: 1px solid #cccccc
+          margin: 0 2vw 0 -4vw
         .right
           display: inline-block
           border: 1px solid #cccccc
+          width 50vw
+          .building-list
+            width 100%
+            margin 3vh 1vw 0 1vw
+            padding: 0;
+            border-collapse: collapse;
+            .building-list-content
+              margin 0 auto
       .links-wrapper
         width: 100%
         text-align: center
         .link
-          margin: 2rem 2rem
+          margin: 1rem 2rem
 </style>
 
 <style scoped lang="scss">
@@ -529,6 +538,11 @@
     padding-left: 6px;
     color: #555555;
     outline: none;
+  }
+  /*我是漂亮の小皇冠，虽然亲爱的不一定会留，但是我就要放在这里*/
+  .picture{
+    height: 40px;
+    padding-right: 10px;
   }
 </style>
 

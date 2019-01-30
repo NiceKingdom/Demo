@@ -4,6 +4,7 @@ import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueSwal from 'vue-sweetalert2'
+import './assets/iconfont.css'
 
 /* component */
 import App from './App'

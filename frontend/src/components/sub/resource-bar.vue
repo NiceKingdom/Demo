@@ -24,6 +24,8 @@
 <style scoped>
   .flex-block {
     width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: #e6e9c0;
   }
   .flex-row {
     display: flex;
@@ -35,6 +37,5 @@
     min-width: 80px;
     padding: 4px 8px;
     margin: 4px 8px;
-    background: rgba(212, 198, 120, 0.12);
   }
 </style>

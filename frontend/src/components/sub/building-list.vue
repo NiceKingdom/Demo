@@ -47,14 +47,14 @@
   @import "../../assets/scss/global_css";
   table, th, td {
     border: 1px solid black;
-    padding: 2px;
+    padding: 3px 0;
     border-collapse: collapse;
   }
   .make-building {
     border: none;
   }
   .button {
-    margin: 0 1px 3px auto;
+    margin: 0 10px 3px auto;
     height: 1.5rem;
     width: 2.7rem;
     font-size: 15px;
