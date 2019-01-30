@@ -195,7 +195,7 @@ class BuildingService
             }
 
             // 删除建筑进程
-            $this->deleteSchedule($this->schedules[$scheduleKey]->id);
+            $this->deleteSchedule($this->schedules[$scheduleKey]);
             DB::commit();
             return ['succeed', '已取消该施工项目'];
         } catch (\Exception $exception) {
