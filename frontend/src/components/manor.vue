@@ -111,7 +111,7 @@
         width: 40%
         height: 60px
         line-height: 60px
-        font-size: 1.8rem
+        font-size: 2.4rem
         text-align: center
         vertical-align: middle
     .manor-main-wrapper
