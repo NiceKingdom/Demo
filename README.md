@@ -1,5 +1,7 @@
 # 繁盛王国
 
+> Demo 开发已结束，前端代码挪至 [Core-Frontend](https://github.com/NiceKingdom/Core-Frontend) 仓库，后端代码挪至 [Core-Backend](https://github.com/NiceKingdom/Core-Backend) 仓库。
+
 Demo 版本：0.1 ver。
 
 # 部署
